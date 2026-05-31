@@ -24,7 +24,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .login-body{flex:1;background:#fff;border-radius:28px 28px 0 0;padding:28px 20px;overflow-y:auto}
 .field-label{font-size:12px;font-weight:600;color:#1A1A1A;margin-bottom:8px}
 .input{width:100%;padding:14px;font-size:15px;border-radius:12px;border:1.5px solid #eee;background:#fafafa;color:#1A1A1A;margin-bottom:16px;outline:none}
-.input select{width:100%;padding:14px;font-size:15px;border-radius:12px;border:1.5px solid #eee;background:#fafafa;color:#1A1A1A;margin-bottom:16px;outline:none}
 .btn-main{width:100%;padding:16px;background:#1A1A1A;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer}
 .btn-naranja{background:#FF4D00 !important}
 .btn-rojo{background:#E24B4A !important}
@@ -67,6 +66,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .btn-sm-naranja{background:#FFF0E5;color:#FF4D00}
 .btn-sm-rojo{background:#FFF0F0;color:#E24B4A}
 .btn-sm-gris{background:#f5f5f5;color:#888}
+.btn-sm-verde{background:#E8F5E9;color:#2D6A2D}
 .user-card{background:#fff;border-radius:14px;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
 .user-head{padding:14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f5f5f5}
 .user-avatar{width:42px;height:42px;border-radius:50%;background:#FF4D00;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
@@ -74,7 +74,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .user-nombre{font-size:14px;font-weight:600;color:#1A1A1A}
 .user-email{font-size:11px;color:#888;margin-top:2px}
 .user-rol{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:#f5f5f5;color:#555}
-.user-actions{display:flex;gap:8px;padding:10px 14px}
+.user-actions{display:flex;gap:8px;padding:10px 14px;flex-wrap:wrap}
 .user-badge-pausado{background:#FFF0F0;color:#E24B4A;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
 .user-badge-activo{background:#E8F5E9;color:#2D6A2D;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
 .btn-add{width:100%;padding:14px;background:#f5f5f5;color:#1A1A1A;border:1.5px dashed #ddd;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
@@ -89,19 +89,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .msg-ok{font-size:12px;padding:10px;background:#E8F5E9;border-radius:8px;color:#2D6A2D;margin-bottom:12px;display:none}
 .msg-err{font-size:12px;padding:10px;background:#FFF0F0;border-radius:8px;color:#E24B4A;margin-bottom:12px;display:none}
 .loading-spinner{text-align:center;padding:20px;color:#888;font-size:13px}
-.pedido-card{background:#fff;border-radius:14px;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
-.pedido-head{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f5f5f5}
-.pedido-num{font-size:12px;font-weight:700;color:#FF4D00}
-.pedido-cliente{font-size:13px;font-weight:600;color:#1A1A1A;margin-top:2px}
-.pedido-hora{font-size:11px;color:#888}
-.tag{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px}
-.tag-nuevo{background:#FFF0E5;color:#FF4D00}
-.tag-camino{background:#E3F2FD;color:#1565C0}
-.tag-ok{background:#E8F5E9;color:#2D6A2D}
-.pedido-body{padding:10px 14px;font-size:12px;color:#555;border-bottom:1px solid #f5f5f5}
-.pedido-footer{padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
-.pedido-total{font-size:14px;font-weight:700;color:#1A1A1A}
-.pedido-rest{font-size:11px;color:#888;margin-top:2px}
 .hidden{display:none !important}
 </style>
 </head>
@@ -152,51 +139,17 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <div class="stats-grid">
       <div class="stat-card highlight"><div class="stat-icon">📦</div><div class="stat-val" id="stat-pedidos">0</div><div class="stat-label">Pedidos hoy</div></div>
       <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val">$0</div><div class="stat-label">Ingresos hoy</div></div>
-      <div class="stat-card"><div class="stat-icon">🍽</div><div class="stat-val" id="stat-restos">3</div><div class="stat-label">Restaurantes</div></div>
-      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-val" id="stat-usuarios">0</div><div class="stat-label">Usuarios activos</div></div>
+      <div class="stat-card"><div class="stat-icon">🍽</div><div class="stat-val" id="stat-restos">–</div><div class="stat-label">Restaurantes</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-val" id="stat-usuarios">–</div><div class="stat-label">Usuarios</div></div>
     </div>
     <div class="section-title">Restaurantes activos</div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🦞</div><div class="rest-info"><div class="rest-nombre">El Bodegón NKT</div><div class="rest-cat">Mariscos · Pizzas · Sándwiches</div></div><span class="rest-badge abierto">Abierto</span></div>
-    </div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🍕</div><div class="rest-info"><div class="rest-nombre">Colantonio's</div><div class="rest-cat">Pizza napolitana · Empanadas</div></div><span class="rest-badge abierto">Abierto</span></div>
-    </div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🍣</div><div class="rest-info"><div class="rest-nombre">Kusama Sushi</div><div class="rest-cat">Sushi · Mariscos</div></div><span class="rest-badge cerrado">Cerrado</span></div>
-    </div>
+    <div id="dash-restos"><div class="loading-spinner">Cargando...</div></div>
   </div>
 
   <!-- RESTAURANTES -->
   <div id="tab-restaurantes" class="content hidden">
-    <div class="section-title">Mis restaurantes</div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🦞</div><div class="rest-info"><div class="rest-nombre">El Bodegón NKT</div><div class="rest-cat">Mariscos · Pizzas · Sándwiches</div></div><span class="rest-badge abierto">Abierto</span></div>
-      <div class="rest-stats"><div class="rest-stat"><div class="rest-stat-val">12</div><div class="rest-stat-label">Pedidos</div></div><div class="rest-stat"><div class="rest-stat-val">$48k</div><div class="rest-stat-label">Ingresos</div></div><div class="rest-stat"><div class="rest-stat-val">8</div><div class="rest-stat-label">Productos</div></div></div>
-      <div class="rest-actions">
-        <button class="btn-sm btn-sm-naranja" onclick="editarResto('El Bodegón NKT')">✏️ Editar</button>
-        <button class="btn-sm btn-sm-gris" onclick="pausarResto('El Bodegón NKT')">⏸ Pausar</button>
-        <button class="btn-sm btn-sm-rojo" onclick="eliminarResto('El Bodegón NKT')">🗑 Eliminar</button>
-      </div>
-    </div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🍕</div><div class="rest-info"><div class="rest-nombre">Colantonio's</div><div class="rest-cat">Pizza napolitana · Empanadas</div></div><span class="rest-badge abierto">Abierto</span></div>
-      <div class="rest-stats"><div class="rest-stat"><div class="rest-stat-val">8</div><div class="rest-stat-label">Pedidos</div></div><div class="rest-stat"><div class="rest-stat-val">$32k</div><div class="rest-stat-label">Ingresos</div></div><div class="rest-stat"><div class="rest-stat-val">6</div><div class="rest-stat-label">Productos</div></div></div>
-      <div class="rest-actions">
-        <button class="btn-sm btn-sm-naranja" onclick="editarResto('Colantonio\'s')">✏️ Editar</button>
-        <button class="btn-sm btn-sm-gris" onclick="pausarResto('Colantonio\'s')">⏸ Pausar</button>
-        <button class="btn-sm btn-sm-rojo" onclick="eliminarResto('Colantonio\'s')">🗑 Eliminar</button>
-      </div>
-    </div>
-    <div class="rest-card">
-      <div class="rest-head"><div class="rest-emoji">🍣</div><div class="rest-info"><div class="rest-nombre">Kusama Sushi</div><div class="rest-cat">Sushi · Mariscos</div></div><span class="rest-badge cerrado">Cerrado</span></div>
-      <div class="rest-stats"><div class="rest-stat"><div class="rest-stat-val">5</div><div class="rest-stat-label">Pedidos</div></div><div class="rest-stat"><div class="rest-stat-val">$62k</div><div class="rest-stat-label">Ingresos</div></div><div class="rest-stat"><div class="rest-stat-val">12</div><div class="rest-stat-label">Productos</div></div></div>
-      <div class="rest-actions">
-        <button class="btn-sm btn-sm-naranja" onclick="editarResto('Kusama Sushi')">✏️ Editar</button>
-        <button class="btn-sm btn-sm-verde" onclick="pausarResto('Kusama Sushi')">▶️ Activar</button>
-        <button class="btn-sm btn-sm-rojo" onclick="eliminarResto('Kusama Sushi')">🗑 Eliminar</button>
-      </div>
-    </div>
+    <div class="section-title">Restaurantes registrados</div>
+    <div id="lista-restaurantes"><div class="loading-spinner">Cargando...</div></div>
     <button class="btn-add" onclick="abrirModal('modal-resto')">+ Agregar restaurante</button>
   </div>
 
@@ -237,20 +190,20 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <div class="field-label">Email</div>
     <input type="email" id="new-email" placeholder="usuario@gmail.com" class="input"/>
     <div class="field-label">Contraseña</div>
-    <div class="pass-wrap"><input type="password" id="new-pass" placeholder="••••••••" class="input"/><span class="pass-ojo" onclick="togglePass('new-pass',this)">👁</span></div>
+    <div class="pass-wrap"><input type="password" id="new-pass" placeholder="Mínimo 6 caracteres" class="input"/><span class="pass-ojo" onclick="togglePass('new-pass',this)">👁</span></div>
     <div class="field-label">Rol</div>
-    <select id="new-rol" class="input" style="margin-bottom:16px">
+    <select id="new-rol" class="input" style="margin-bottom:16px" onchange="toggleRestSelect()">
       <option value="cliente">Cliente</option>
       <option value="encargado">Encargado de restaurante</option>
       <option value="cadete">Cadete</option>
       <option value="admin">Admin</option>
     </select>
-    <div class="field-label">Restaurante (si es encargado)</div>
-    <select id="new-rest" class="input" style="margin-bottom:16px">
-      <option>El Bodegón NKT</option>
-      <option>Colantonio's</option>
-      <option>Kusama Sushi</option>
-    </select>
+    <div id="rest-select-wrap">
+      <div class="field-label">Restaurante asignado</div>
+      <select id="new-rest" class="input" style="margin-bottom:16px">
+        <option value="">Cargando...</option>
+      </select>
+    </div>
     <button class="btn-main btn-naranja" onclick="crearUsuario()">Crear usuario</button>
     <button class="btn-add" style="margin-top:8px" onclick="cerrarModal('modal-nuevo-usuario')">Cancelar</button>
   </div>
@@ -275,9 +228,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 <!-- MODAL NUEVO RESTAURANTE -->
 <div id="modal-resto" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-resto')">
   <div class="modal">
-    <div class="modal-title">Nuevo restaurante <span class="modal-close" onclick="cerrarModal('modal-resto')">✕</span></div>
+    <div class="modal-title">
+      <span id="modal-resto-titulo">Nuevo restaurante</span>
+      <span class="modal-close" onclick="cerrarModal('modal-resto')">✕</span>
+    </div>
     <div id="msg-resto-ok" class="msg-ok"></div>
     <div id="msg-resto-err" class="msg-err"></div>
+    <input type="hidden" id="resto-id"/>
     <div class="field-label">Nombre</div>
     <input type="text" id="resto-nombre" placeholder="Ej: La Pizzería" class="input"/>
     <div class="field-label">Categoría</div>
@@ -289,7 +246,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
       <input type="number" id="resto-tmin" placeholder="Mín" value="20" class="input" style="margin-bottom:0"/>
       <input type="number" id="resto-tmax" placeholder="Máx" value="40" class="input" style="margin-bottom:0"/>
     </div>
-    <button class="btn-main btn-naranja" onclick="crearRestaurante()">Agregar restaurante</button>
+    <button class="btn-main btn-naranja" onclick="guardarRestaurante()">Guardar restaurante</button>
     <button class="btn-add" style="margin-top:8px" onclick="cerrarModal('modal-resto')">Cancelar</button>
   </div>
 </div>
@@ -306,8 +263,9 @@ const sbAdmin = createClient(SUPABASE_URL, SERVICE_KEY, {
 })
 
 var todosUsuarios = []
+var restaurantesCache = []
 
-// Verificar sesión
+// ─── SESIÓN ─────────────────────────────────────────────────────────────────
 sb.auth.getSession().then(function(result){
   if(result.data.session && result.data.session.user.email === 'info.all.argentina@gmail.com'){
     mostrarPanel(result.data.session.user.email)
@@ -335,7 +293,9 @@ function mostrarPanel(email){
   document.getElementById('screen-login').style.display = 'none'
   document.getElementById('screen-panel').style.display = 'flex'
   document.getElementById('user-email-display').textContent = email
+  cargarDashboard()
   cargarUsuarios()
+  cargarRestaurantesSelect()
 }
 
 async function cerrarSesion(){
@@ -345,26 +305,157 @@ async function cerrarSesion(){
   document.getElementById('btn-ingresar').textContent = 'Ingresar al panel →'
 }
 
+// ─── TABS ───────────────────────────────────────────────────────────────────
 function switchTab(tab, el){
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active') })
   el.classList.add('active')
   var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios']
   tabs.forEach(function(t){
-    var panel = document.getElementById('tab-'+t)
-    if(t === tab){ panel.classList.remove('hidden') }
-    else { panel.classList.add('hidden') }
+    document.getElementById('tab-'+t).classList[t === tab ? 'remove' : 'add']('hidden')
   })
   if(tab === 'usuarios') cargarUsuarios()
   if(tab === 'cadetes') cargarCadetes()
+  if(tab === 'restaurantes') cargarRestaurantes()
 }
 
-// CARGAR USUARIOS desde Supabase Auth
+// ─── DASHBOARD ──────────────────────────────────────────────────────────────
+async function cargarDashboard(){
+  var result = await sb.from('restaurantes').select('id,nombre,categoria,abierto')
+  if(result.data){
+    document.getElementById('stat-restos').textContent = result.data.length
+    var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
+    var html = ''
+    result.data.forEach(function(r){
+      var emoji = emojis[r.nombre] || '🍽'
+      var ab = r.abierto !== false
+      html += '<div class="rest-card"><div class="rest-head">'
+      html += '<div class="rest-emoji">'+emoji+'</div>'
+      html += '<div class="rest-info"><div class="rest-nombre">'+r.nombre+'</div>'
+      html += '<div class="rest-cat">'+(r.categoria||'')+'</div></div>'
+      html += '<span class="rest-badge '+(ab?'abierto':'cerrado')+'">'+(ab?'Abierto':'Cerrado')+'</span>'
+      html += '</div></div>'
+    })
+    document.getElementById('dash-restos').innerHTML = html || '<div class="loading-spinner">Sin restaurantes</div>'
+  }
+}
+
+// ─── RESTAURANTES ───────────────────────────────────────────────────────────
+async function cargarRestaurantes(){
+  var lista = document.getElementById('lista-restaurantes')
+  lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
+  var result = await sb.from('restaurantes').select('*').order('nombre')
+  if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error cargando</div>'; return }
+  restaurantesCache = result.data || []
+  if(!restaurantesCache.length){ lista.innerHTML = '<div class="loading-spinner">Sin restaurantes</div>'; return }
+  var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
+  var html = ''
+  restaurantesCache.forEach(function(r){
+    var emoji = emojis[r.nombre] || '🍽'
+    var ab = r.abierto !== false
+    html += '<div class="rest-card">'
+    html += '<div class="rest-head">'
+    html += '<div class="rest-emoji">'+emoji+'</div>'
+    html += '<div class="rest-info"><div class="rest-nombre">'+r.nombre+'</div>'
+    html += '<div class="rest-cat">'+(r.categoria||'')+'</div></div>'
+    html += '<span class="rest-badge '+(ab?'abierto':'cerrado')+'">'+(ab?'Abierto':'Cerrado')+'</span>'
+    html += '</div>'
+    html += '<div class="rest-actions">'
+    html += '<button class="btn-sm btn-sm-naranja" onclick="editarResto(\''+r.id+'\')">✏️ Editar</button>'
+    if(ab){
+      html += '<button class="btn-sm btn-sm-gris" onclick="toggleAbiertoResto(\''+r.id+'\',false)">⏸ Pausar</button>'
+    } else {
+      html += '<button class="btn-sm btn-sm-verde" onclick="toggleAbiertoResto(\''+r.id+'\',true)">▶️ Activar</button>'
+    }
+    html += '<button class="btn-sm btn-sm-rojo" onclick="eliminarResto(\''+r.id+'\',\''+r.nombre.replace(/'/g,"\\'")+ '\')">🗑 Eliminar</button>'
+    html += '</div></div>'
+  })
+  lista.innerHTML = html
+}
+
+async function cargarRestaurantesSelect(){
+  var result = await sb.from('restaurantes').select('id,nombre').order('nombre')
+  if(result.data){
+    restaurantesCache = result.data
+    var select = document.getElementById('new-rest')
+    select.innerHTML = result.data.map(function(r){
+      return '<option value="'+r.id+'">'+r.nombre+'</option>'
+    }).join('')
+  }
+}
+
+function toggleRestSelect(){
+  var rol = document.getElementById('new-rol').value
+  document.getElementById('rest-select-wrap').style.display = rol === 'encargado' ? 'block' : 'none'
+}
+
+function editarResto(id){
+  var r = restaurantesCache.find(function(x){ return x.id === id })
+  if(!r) return
+  document.getElementById('resto-id').value = r.id
+  document.getElementById('resto-nombre').value = r.nombre || ''
+  document.getElementById('resto-cat').value = r.categoria || ''
+  document.getElementById('resto-dir').value = r.direccion || ''
+  document.getElementById('resto-tmin').value = r.tiempo_entrega_min || 20
+  document.getElementById('resto-tmax').value = r.tiempo_entrega_max || 40
+  document.getElementById('modal-resto-titulo').textContent = 'Editar restaurante'
+  document.getElementById('msg-resto-ok').style.display = 'none'
+  document.getElementById('msg-resto-err').style.display = 'none'
+  abrirModal('modal-resto')
+}
+
+async function toggleAbiertoResto(id, abierto){
+  await sb.from('restaurantes').update({ abierto: abierto }).eq('id', id)
+  cargarRestaurantes()
+  cargarDashboard()
+}
+
+async function eliminarResto(id, nombre){
+  if(!confirm('¿Eliminar "'+nombre+'"? Esta acción no se puede deshacer.')) return
+  var result = await sb.from('restaurantes').delete().eq('id', id)
+  if(result.error){ alert('Error: '+result.error.message); return }
+  cargarRestaurantes()
+  cargarDashboard()
+  cargarRestaurantesSelect()
+}
+
+async function guardarRestaurante(){
+  var id = document.getElementById('resto-id').value
+  var nombre = document.getElementById('resto-nombre').value.trim()
+  var cat = document.getElementById('resto-cat').value.trim()
+  var dir = document.getElementById('resto-dir').value.trim()
+  var tmin = parseInt(document.getElementById('resto-tmin').value) || 20
+  var tmax = parseInt(document.getElementById('resto-tmax').value) || 40
+  var msgOk = document.getElementById('msg-resto-ok')
+  var msgErr = document.getElementById('msg-resto-err')
+  msgOk.style.display='none'; msgErr.style.display='none'
+  if(!nombre){ msgErr.style.display='block'; msgErr.textContent='Ingresá el nombre'; return }
+
+  var data = { nombre: nombre, categoria: cat, direccion: dir, tiempo_entrega_min: tmin, tiempo_entrega_max: tmax }
+  var result
+  if(id){
+    result = await sb.from('restaurantes').update(data).eq('id', id)
+  } else {
+    result = await sb.from('restaurantes').insert([data])
+  }
+  if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
+  msgOk.style.display='block'; msgOk.textContent = id ? '✓ Restaurante actualizado' : '✓ Restaurante agregado correctamente'
+  document.getElementById('resto-id').value = ''
+  document.getElementById('resto-nombre').value = ''
+  document.getElementById('resto-cat').value = ''
+  document.getElementById('resto-dir').value = ''
+  document.getElementById('modal-resto-titulo').textContent = 'Nuevo restaurante'
+  cargarRestaurantes()
+  cargarDashboard()
+  cargarRestaurantesSelect()
+}
+
+// ─── USUARIOS ───────────────────────────────────────────────────────────────
 async function cargarUsuarios(){
   var lista = document.getElementById('lista-usuarios')
   lista.innerHTML = '<div class="loading-spinner">Cargando usuarios...</div>'
   try {
     var result = await sbAdmin.auth.admin.listUsers()
-    if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error cargando usuarios</div>'; return }
+    if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error: '+result.error.message+'</div>'; return }
     todosUsuarios = result.data.users
     document.getElementById('stat-usuarios').textContent = todosUsuarios.length
     renderUsuarios(todosUsuarios)
@@ -382,15 +473,16 @@ function renderUsuarios(users){
     var pausado = u.banned_until && new Date(u.banned_until) > new Date()
     var colors = ['#FF4D00','#2D6A2D','#1565C0','#7B1FA2']
     var color = colors[Math.abs(u.email.charCodeAt(0)) % colors.length]
-    html += '<div class="user-card">'
-    html += '<div class="user-head">'
+    var meta = u.user_metadata || {}
+    var rolLabel = meta.rol ? ' · '+meta.rol : ''
+    var restoLabel = meta.resto_nombre ? ' ('+meta.resto_nombre+')' : ''
+    html += '<div class="user-card"><div class="user-head">'
     html += '<div class="user-avatar" style="background:'+color+'">'+iniciales+'</div>'
     html += '<div class="user-info"><div class="user-nombre">'+u.email+'</div>'
-    html += '<div class="user-email">Creado: '+new Date(u.created_at).toLocaleDateString('es-AR')+'</div></div>'
+    html += '<div class="user-email">'+new Date(u.created_at).toLocaleDateString('es-AR')+rolLabel+restoLabel+'</div></div>'
     html += pausado ? '<span class="user-badge-pausado">Pausado</span>' : '<span class="user-badge-activo">Activo</span>'
-    html += '</div>'
-    html += '<div class="user-actions">'
-    html += '<button class="btn-sm btn-sm-naranja" onclick="abrirCambiarPass(\''+u.id+'\',\''+u.email+'\')">🔑 Contraseña</button>'
+    html += '</div><div class="user-actions">'
+    html += '<button class="btn-sm btn-sm-naranja" onclick="abrirCambiarPass(\''+u.id+'\',\''+u.email+'\')">🔑 Pass</button>'
     if(pausado){
       html += '<button class="btn-sm btn-sm-verde" onclick="reactivarUsuario(\''+u.id+'\')">▶️ Activar</button>'
     } else {
@@ -410,6 +502,49 @@ function filtrarUsuarios(rol){
   renderUsuarios(filtrados.length ? filtrados : todosUsuarios)
 }
 
+// ─── CREAR USUARIO ── FIX: guarda resto_id en metadata ──────────────────────
+async function crearUsuario(){
+  var email = document.getElementById('new-email').value.trim()
+  var pass = document.getElementById('new-pass').value
+  var nombre = document.getElementById('new-nombre').value.trim()
+  var rol = document.getElementById('new-rol').value
+  var msgOk = document.getElementById('msg-nuevo-ok')
+  var msgErr = document.getElementById('msg-nuevo-err')
+  msgOk.style.display='none'; msgErr.style.display='none'
+  if(!email || !pass){ msgErr.style.display='block'; msgErr.textContent='Completá email y contraseña'; return }
+
+  var metadata = { nombre: nombre, rol: rol }
+
+  // ── FIX: si es encargado, guardar el id Y nombre del restaurante ──
+  if(rol === 'encargado'){
+    var restoSelectVal = document.getElementById('new-rest').value
+    var restoOption = document.getElementById('new-rest')
+    var restoNombre = restoOption.options[restoOption.selectedIndex] ? restoOption.options[restoOption.selectedIndex].text : ''
+    if(restoSelectVal){
+      metadata.resto_id = restoSelectVal
+      metadata.resto_nombre = restoNombre
+      // emoji hardcodeado por nombre
+      var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
+      metadata.resto_emoji = emojis[restoNombre] || '🍽'
+      // categoria del restaurante
+      var restoData = restaurantesCache.find(function(r){ return r.id === restoSelectVal })
+      if(restoData) metadata.resto_cat = restoData.categoria || ''
+    }
+  }
+
+  var result = await sbAdmin.auth.admin.createUser({
+    email: email, password: pass, email_confirm: true,
+    user_metadata: metadata
+  })
+  if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
+  msgOk.style.display='block'; msgOk.textContent='✓ Usuario creado correctamente'
+  document.getElementById('new-email').value = ''
+  document.getElementById('new-pass').value = ''
+  document.getElementById('new-nombre').value = ''
+  cargarUsuarios()
+}
+
+// ─── CADETES ────────────────────────────────────────────────────────────────
 async function cargarCadetes(){
   var lista = document.getElementById('lista-cadetes')
   lista.innerHTML = '<div class="loading-spinner">Cargando cadetes...</div>'
@@ -422,7 +557,8 @@ async function cargarCadetes(){
     cadetes.forEach(function(u){
       html += '<div class="user-card"><div class="user-head">'
       html += '<div class="user-avatar" style="background:#1A1A1A">🏍</div>'
-      html += '<div class="user-info"><div class="user-nombre">'+u.email+'</div></div>'
+      html += '<div class="user-info"><div class="user-nombre">'+u.email+'</div>'
+      html += '<div class="user-email">'+(u.user_metadata.nombre||'Sin nombre')+'</div></div>'
       html += '<span class="user-badge-activo">Cadete</span>'
       html += '</div></div>'
     })
@@ -432,29 +568,7 @@ async function cargarCadetes(){
   }
 }
 
-// CREAR USUARIO
-async function crearUsuario(){
-  var email = document.getElementById('new-email').value.trim()
-  var pass = document.getElementById('new-pass').value
-  var nombre = document.getElementById('new-nombre').value.trim()
-  var rol = document.getElementById('new-rol').value
-  var msgOk = document.getElementById('msg-nuevo-ok')
-  var msgErr = document.getElementById('msg-nuevo-err')
-  msgOk.style.display = 'none'; msgErr.style.display = 'none'
-  if(!email || !pass){ msgErr.style.display='block'; msgErr.textContent='Completá email y contraseña'; return }
-  var result = await sbAdmin.auth.admin.createUser({
-    email: email, password: pass, email_confirm: true,
-    user_metadata: { nombre: nombre, rol: rol }
-  })
-  if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
-  msgOk.style.display='block'; msgOk.textContent='✓ Usuario creado correctamente'
-  document.getElementById('new-email').value = ''
-  document.getElementById('new-pass').value = ''
-  document.getElementById('new-nombre').value = ''
-  cargarUsuarios()
-}
-
-// CAMBIAR CONTRASEÑA
+// ─── CAMBIAR CONTRASEÑA ─────────────────────────────────────────────────────
 function abrirCambiarPass(userId, email){
   document.getElementById('pass-user-id').value = userId
   document.getElementById('pass-user-nombre').value = email
@@ -469,71 +583,48 @@ async function cambiarPassword(){
   var nuevaPass = document.getElementById('nueva-pass').value
   var msgOk = document.getElementById('msg-pass-ok')
   var msgErr = document.getElementById('msg-pass-err')
-  msgOk.style.display = 'none'; msgErr.style.display = 'none'
-  if(!nuevaPass || nuevaPass.length < 6){ msgErr.style.display='block'; msgErr.textContent='La contraseña debe tener al menos 6 caracteres'; return }
+  msgOk.style.display='none'; msgErr.style.display='none'
+  if(!nuevaPass || nuevaPass.length < 6){ msgErr.style.display='block'; msgErr.textContent='Mínimo 6 caracteres'; return }
   var result = await sbAdmin.auth.admin.updateUserById(userId, { password: nuevaPass })
   if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
-  msgOk.style.display='block'; msgOk.textContent='✓ Contraseña actualizada correctamente'
+  msgOk.style.display='block'; msgOk.textContent='✓ Contraseña actualizada'
 }
 
-// PAUSAR USUARIO
 async function pausarUsuario(userId){
-  if(!confirm('¿Pausar este usuario? No podrá ingresar hasta que lo reactives.')) return
-  var banUntil = new Date(Date.now() + 1000*60*60*24*365*10).toISOString()
+  if(!confirm('¿Pausar este usuario?')) return
   var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration: '87600h' })
-  if(result.error){ alert('Error: ' + result.error.message); return }
+  if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
 }
 
-// REACTIVAR USUARIO
 async function reactivarUsuario(userId){
   var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration: 'none' })
-  if(result.error){ alert('Error: ' + result.error.message); return }
+  if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
 }
 
-// ELIMINAR USUARIO
 async function eliminarUsuario(userId, email){
-  if(!confirm('¿Eliminar el usuario ' + email + '? Esta acción no se puede deshacer.')) return
+  if(!confirm('¿Eliminar el usuario '+email+'? Esta acción no se puede deshacer.')) return
   var result = await sbAdmin.auth.admin.deleteUser(userId)
-  if(result.error){ alert('Error: ' + result.error.message); return }
+  if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
 }
 
-// RESTAURANTES
-function editarResto(nombre){ alert('Editar: ' + nombre + '\n(Próximamente)') }
-function pausarResto(nombre){ alert('Pausar: ' + nombre + '\n(Próximamente)') }
-function eliminarResto(nombre){ if(confirm('¿Eliminar ' + nombre + '?')) alert('Eliminado (Próximamente)') }
-
-async function crearRestaurante(){
-  var nombre = document.getElementById('resto-nombre').value.trim()
-  var cat = document.getElementById('resto-cat').value.trim()
-  var dir = document.getElementById('resto-dir').value.trim()
-  var tmin = document.getElementById('resto-tmin').value
-  var tmax = document.getElementById('resto-tmax').value
-  var msgOk = document.getElementById('msg-resto-ok')
-  var msgErr = document.getElementById('msg-resto-err')
-  msgOk.style.display='none'; msgErr.style.display='none'
-  if(!nombre){ msgErr.style.display='block'; msgErr.textContent='Ingresá el nombre'; return }
-  var result = await sb.from('restaurantes').insert([{ nombre, categoria: cat, direccion: dir, tiempo_entrega_min: tmin, tiempo_entrega_max: tmax }])
-  if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
-  msgOk.style.display='block'; msgOk.textContent='✓ Restaurante agregado correctamente'
-  document.getElementById('resto-nombre').value = ''
-  document.getElementById('resto-cat').value = ''
-  document.getElementById('resto-dir').value = ''
-}
-
-// MODALES
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function abrirModal(id){ document.getElementById(id).classList.remove('hidden') }
 function cerrarModal(id){ document.getElementById(id).classList.add('hidden') }
 function cerrarModalBg(e, id){ if(e.target.id === id) cerrarModal(id) }
 
 function togglePass(inputId, btn){
-  var input = document.getElementById ? document.getElementById(inputId) : inputId
-  if(typeof inputId === 'string') input = document.getElementById(inputId)
+  var input = document.getElementById(inputId)
   if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈' }
   else { input.type = 'password'; btn.textContent = '👁' }
 }
+
+// Inicializar: ocultar selector de restaurante hasta que se elija "encargado"
+document.addEventListener('DOMContentLoaded', function(){
+  toggleRestSelect()
+})
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js') })
