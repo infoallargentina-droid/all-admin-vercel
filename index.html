@@ -704,14 +704,14 @@ async function cargarCategorias(){
       +'</div>'
       +'<div style="display:flex;gap:6px">'
       +(c.activa
-        ? '<button class="btn-sm btn-sm-gris" onclick="toggleCat(''+c.id+'',false)">⏸</button>'
-        : '<button class="btn-sm btn-sm-verde" onclick="toggleCat(''+c.id+'',true)">▶️</button>'
+        ? '<button class="btn-sm btn-sm-gris" data-id="'+c.id+'" data-val="false" onclick="toggleCat(this.dataset.id,false)">⏸</button>'
+        : '<button class="btn-sm btn-sm-verde" data-id="'+c.id+'" data-val="true" onclick="toggleCat(this.dataset.id,true)">▶️</button>'
       )
       +'</div>'
       +'</div>'
       +'<div class="cat-admin-actions">'
-      +'<button class="btn-sm btn-sm-naranja" onclick="editarCategoria(''+c.id+'')">✏️ Editar</button>'
-      +'<button class="btn-sm btn-sm-rojo" onclick="eliminarCategoria(''+c.id+'',''+c.nombre+'')">🗑 Eliminar</button>'
+      +'<button class="btn-sm btn-sm-naranja" data-id="'+c.id+'" onclick="editarCategoria(this.dataset.id)">✏️ Editar</button>'
+      +'<button class="btn-sm btn-sm-rojo" data-id="'+c.id+'" data-nombre="'+c.nombre+'" onclick="eliminarCategoria(this.dataset.id,this.dataset.nombre)">🗑 Eliminar</button>'
       +'</div></div>'
   }).join('')
 }
