@@ -970,7 +970,6 @@ async function cargarCobrosResto(){
   var desde = new Date(hoy); desde.setDate(desde.getDate()-30)
   var res = await sb.from('pedidos').select('*,perfiles(nombre,telefono)')
     .eq('restaurante_id', cobrosRestoActual)
-    .eq('estado', 'entregado')
     .gte('created_at', desde.toISOString())
     .order('created_at', {ascending:false})
   var pedidos = res.data||[]
@@ -1010,6 +1009,9 @@ async function cargarCobrosResto(){
     html += '<div>'
     html += '<div style="font-size:11px;font-weight:800;color:#FF4D00">#'+nro+'</div>'
     html += '<div style="font-size:10px;color:#aaa">'+fecha+' '+hora+'</div>'
+    var estadoColor = {nuevo:'#FF8C00',preparando:'#B8860B',en_camino:'#1565C0',entregado:'#2D6A2D',cancelado:'#aaa'}
+    var estadoLabel = {nuevo:'Esperando',preparando:'Preparando',en_camino:'En camino',entregado:'Entregado',cancelado:'Cancelado'}
+    html += '<div style="font-size:9px;font-weight:700;color:'+(estadoColor[p.estado]||'#888')+'">'+(estadoLabel[p.estado]||p.estado)+'</div>'
     html += '</div>'
     // Cliente
     html += '<div>'
@@ -1022,9 +1024,10 @@ async function cargarCobrosResto(){
     if(p.costo_envio>0) html += '<div style="font-size:10px;color:#1565C0">+$'+Number(p.costo_envio).toLocaleString('es-AR')+' envío</div>'
     html += '</div>'
     // Comisión
+    var esCancelado = p.estado === 'cancelado'
     html += '<div style="text-align:right">'
-    html += '<div style="font-size:13px;font-weight:700;color:#FF4D00">$'+Number(comisionPed).toLocaleString('es-AR')+'</div>'
-    html += '<div style="font-size:10px;color:#aaa">'+pct+'%</div>'
+    html += '<div style="font-size:13px;font-weight:700;color:'+(esCancelado?'#aaa':'#FF4D00')+'">$'+Number(comisionPed).toLocaleString('es-AR')+'</div>'
+    html += '<div style="font-size:10px;color:#aaa">'+pct+'%'+(esCancelado?' (cancelado)':'')+'</div>'
     html += '</div>'
     // Botón ver pedido
     html += '<div>'
