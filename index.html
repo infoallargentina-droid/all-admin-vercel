@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="ALL Admin"/>
 <meta name="theme-color" content="#1A1A1A"/>
 <link rel="manifest" href="manifest.json"/>
-<title>ALL — Admin</title>
+<title>ALL — Admin v2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -51,23 +51,34 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .section-title{font-size:11px;font-weight:700;color:#888;letter-spacing:1px;text-transform:uppercase;margin:16px 0 10px}
 .rest-card{background:#fff;border-radius:16px;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
 .rest-head{padding:14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f5f5f5}
-.rest-emoji{font-size:26px;width:48px;height:48px;border-radius:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rest-emoji{font-size:26px;width:48px;height:48px;border-radius:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.rest-emoji img{width:100%;height:100%;object-fit:cover;border-radius:12px}
 .rest-info{flex:1}
 .rest-nombre{font-size:15px;font-weight:600;color:#1A1A1A}
 .rest-cat{font-size:11px;color:#888;margin-top:2px}
 .rest-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px}
 .rest-badge.abierto{background:#E8F5E9;color:#2D6A2D}
 .rest-badge.cerrado{background:#f5f5f5;color:#aaa}
+/* STATS DEL DÍA por restaurante */
+.rest-day-stats{display:grid;grid-template-columns:repeat(4,1fr);padding:10px 14px;gap:6px;background:#f9f9f9;border-bottom:1px solid #f0f0f0}
+.rest-day-stat{text-align:center;padding:8px 4px;background:#fff;border-radius:10px;border:1px solid #f0f0f0}
+.rest-day-stat-val{font-size:15px;font-weight:800;color:#1A1A1A}
+.rest-day-stat-label{font-size:9px;color:#aaa;margin-top:2px;line-height:1.3}
+.rest-day-stat.espera .rest-day-stat-val{color:#FF8C00}
+.rest-day-stat.prep .rest-day-stat-val{color:#B8860B}
+.rest-day-stat.camino .rest-day-stat-val{color:#1565C0}
+.rest-day-stat.total .rest-day-stat-val{color:#FF4D00}
 .rest-stats{display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 14px;gap:8px}
 .rest-stat{text-align:center}
 .rest-stat-val{font-size:16px;font-weight:700;color:#1A1A1A}
 .rest-stat-label{font-size:10px;color:#888}
-.rest-actions{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #f5f5f5}
+.rest-actions{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #f5f5f5;flex-wrap:wrap}
 .btn-sm{padding:7px 14px;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer}
 .btn-sm-naranja{background:#FFF0E5;color:#FF4D00}
 .btn-sm-rojo{background:#FFF0F0;color:#E24B4A}
 .btn-sm-gris{background:#f5f5f5;color:#888}
 .btn-sm-verde{background:#E8F5E9;color:#2D6A2D}
+.btn-sm-azul{background:#E3F2FD;color:#1565C0}
 .user-card{background:#fff;border-radius:14px;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
 .user-head{padding:14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f5f5f5}
 .user-avatar{width:42px;height:42px;border-radius:50%;background:#FF4D00;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
@@ -101,6 +112,32 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 .color-picker-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .color-opt{width:36px;height:36px;border-radius:10px;cursor:pointer;border:3px solid transparent;font-size:16px;display:flex;align-items:center;justify-content:center}
 .color-opt.selected{border-color:#1A1A1A}
+/* PEDIDOS ADMIN */
+.pedido-admin-card{background:#fff;border-radius:14px;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
+.pedido-admin-head{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid #f5f5f5}
+.pedido-admin-num{font-size:12px;font-weight:800;color:#FF4D00;margin-bottom:3px}
+.pedido-admin-cliente{font-size:15px;font-weight:700;color:#1A1A1A}
+.pedido-admin-tel{font-size:11px;color:#888;margin-top:2px}
+.pedido-admin-monto{font-size:20px;font-weight:800;color:#1A1A1A;text-align:right}
+.pedido-admin-hora{font-size:11px;color:#aaa;text-align:right;margin-top:2px}
+.pedido-admin-items{padding:8px 14px;font-size:12px;color:#555;line-height:1.8;border-bottom:1px solid #f5f5f5}
+.pedido-admin-footer{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#888}
+/* TAGS */
+.tag{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tag-nuevo{background:#FFF0E5;color:#FF4D00}
+.tag-preparando{background:#FFF9E5;color:#B8860B}
+.tag-camino{background:#E3F2FD;color:#1565C0}
+.tag-entregado{background:#E8F5E9;color:#2D6A2D}
+.tag-cancelado{background:#f5f5f5;color:#aaa}
+/* ZONA */
+.zona-card{background:#fff;border-radius:12px;border:1px solid #eee;margin-bottom:8px;overflow:hidden}
+.zona-head{padding:12px 14px;display:flex;align-items:center;gap:12px}
+.zona-badge{width:48px;height:48px;border-radius:12px;background:#FFF4EF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#FF4D00;flex-shrink:0}
+.zona-info{flex:1}
+.zona-nombre{font-size:14px;font-weight:600;color:#1A1A1A}
+.zona-detail{font-size:11px;color:#888;margin-top:2px}
+.zona-precio{font-size:16px;font-weight:800;color:#1A1A1A}
+.zona-actions{display:flex;gap:8px;padding:8px 14px;border-top:1px solid #f5f5f5}
 </style>
 </head>
 <body>
@@ -131,7 +168,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   <div class="topbar">
     <div>
       <div class="topbar-logo">ALL <span>Admin</span></div>
-      <div class="topbar-sub" id="user-email-display">Panel de administración</div>
+      <div class="topbar-sub" id="user-email-display">Panel de administración · v2</div>
     </div>
     <div class="topbar-right">
       <button style="background:rgba(255,255,255,0.1);border:none;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;cursor:pointer" onclick="cerrarSesion()">Salir</button>
@@ -152,7 +189,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   <div id="tab-dashboard" class="content">
     <div class="stats-grid">
       <div class="stat-card highlight"><div class="stat-icon">📦</div><div class="stat-val" id="stat-pedidos">0</div><div class="stat-label">Pedidos hoy</div></div>
-      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val">$0</div><div class="stat-label">Ingresos hoy</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val" id="stat-ingresos">$0</div><div class="stat-label">Ingresos hoy</div></div>
       <div class="stat-card"><div class="stat-icon">🍽</div><div class="stat-val" id="stat-restos">–</div><div class="stat-label">Restaurantes</div></div>
       <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-val" id="stat-usuarios">–</div><div class="stat-label">Usuarios</div></div>
     </div>
@@ -176,14 +213,16 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
       </select>
       <select id="pedidos-filtro-estado" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarPedidosAdmin()">
         <option value="">Todos los estados</option>
-        <option value="nuevo">Nuevo</option>
+        <option value="nuevo">Esperando</option>
         <option value="preparando">Preparando</option>
-        <option value="camino">En camino</option>
+        <option value="en_camino">En camino</option>
         <option value="entregado">Entregado</option>
         <option value="cancelado">Cancelado</option>
       </select>
       <input type="date" id="pedidos-filtro-fecha" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarPedidosAdmin()"/>
     </div>
+    <!-- Resumen del día -->
+    <div id="pedidos-resumen-dia" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px"></div>
     <div id="lista-pedidos"><div class="loading-spinner">Cargando pedidos...</div></div>
   </div>
 
@@ -191,16 +230,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   <div id="tab-cobros" class="content hidden" style="overflow-y:auto">
     <div class="section-title">Cuenta corriente</div>
     <div style="font-size:12px;color:#888;margin-bottom:14px">Seguimiento de comisiones y cobros por restaurante.</div>
-
-    <!-- Selector restaurante -->
     <select id="cobros-resto-select" class="input" onchange="seleccionarRestoCobro(this.value)">
       <option value="">-- Elegí un restaurante --</option>
     </select>
-
     <div id="cobros-empty" style="text-align:center;padding:32px;color:#aaa;font-size:13px">Seleccioná un restaurante</div>
-
     <div id="cobros-panel" style="display:none">
-      <!-- Config cobro -->
       <div class="rest-card" style="margin-bottom:14px">
         <div class="rest-head" style="flex-direction:column;align-items:flex-start;gap:10px">
           <div style="font-size:13px;font-weight:700;color:#1A1A1A">⚙️ Configuración de cobro</div>
@@ -226,29 +260,20 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
           <div id="cobro-config-msg" style="font-size:11px;color:#2D6A2D;display:none">✓ Configuración guardada</div>
         </div>
       </div>
-
-      <!-- Selector período -->
       <div class="field-label">Período a cobrar</div>
       <select id="cobro-periodo-sel" class="input" onchange="cargarCobrosResto()">
         <option value="">Cargando períodos...</option>
       </select>
-
-      <!-- Stats -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
         <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="cobro-pedidos">0</div><div class="stat-label">Pedidos</div></div>
         <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val" id="cobro-ventas">$0</div><div class="stat-label">Ventas</div></div>
         <div class="stat-card highlight"><div class="stat-icon">⚙️</div><div class="stat-val" id="cobro-comision">$0</div><div class="stat-label">Comisión ALL</div></div>
       </div>
-
-      <!-- Detalle -->
       <div class="section-title">Detalle de pedidos del período</div>
       <div id="cobros-detalle"><div class="loading-spinner">Seleccioná un período</div></div>
-
-      <!-- Botones -->
       <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
         <button class="btn-main" style="flex:1;background:#2D6A2D" onclick="marcarCobrado()">✓ Marcar como cobrado</button>
         <button class="btn-main" style="flex:1;background:#1565C0" onclick="generarPDF()">📄 Generar PDF</button>
-        <button class="btn-main" style="flex:1;background:#25D366" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
       </div>
       <div id="cobro-msg" style="font-size:11px;color:#2D6A2D;margin-top:8px;text-align:center;display:none"></div>
     </div>
@@ -272,6 +297,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <div id="lista-usuarios"><div class="loading-spinner">Cargando usuarios...</div></div>
     <button class="btn-add" onclick="abrirModal('modal-nuevo-usuario')">+ Agregar usuario</button>
   </div>
+
   <!-- ZONAS DE ENVÍO -->
   <div id="tab-zonas" class="content hidden" style="overflow-y:auto">
     <div class="section-title">Zonas de envío por restaurante</div>
@@ -306,7 +332,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
-<!-- MODAL NUEVO USUARIO -->
+<!-- MODALES -->
 <div id="modal-nuevo-usuario" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-nuevo-usuario')">
   <div class="modal">
     <div class="modal-title">Nuevo usuario <span class="modal-close" onclick="cerrarModal('modal-nuevo-usuario')">✕</span></div>
@@ -327,16 +353,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     </select>
     <div id="rest-select-wrap">
       <div class="field-label">Restaurante asignado</div>
-      <select id="new-rest" class="input" style="margin-bottom:16px">
-        <option value="">Cargando...</option>
-      </select>
+      <select id="new-rest" class="input" style="margin-bottom:16px"><option value="">Cargando...</option></select>
     </div>
     <button class="btn-main btn-naranja" onclick="crearUsuario()">Crear usuario</button>
     <button class="btn-add" style="margin-top:8px" onclick="cerrarModal('modal-nuevo-usuario')">Cancelar</button>
   </div>
 </div>
 
-<!-- MODAL CAMBIAR CONTRASEÑA -->
 <div id="modal-cambiar-pass" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-cambiar-pass')">
   <div class="modal">
     <div class="modal-title">Cambiar contraseña <span class="modal-close" onclick="cerrarModal('modal-cambiar-pass')">✕</span></div>
@@ -352,7 +375,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
-<!-- MODAL NUEVO RESTAURANTE -->
 <div id="modal-resto" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-resto')">
   <div class="modal">
     <div class="modal-title">
@@ -378,7 +400,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
-<!-- MODAL CATEGORIA -->
 <div id="modal-categoria" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-categoria')">
   <div class="modal">
     <div class="modal-title">
@@ -431,7 +452,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
-<!-- MODAL ZONA -->
 <div id="modal-zona" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-zona')">
   <div class="modal">
     <div class="modal-title">
@@ -458,15 +478,15 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 const SUPABASE_URL = 'https://rkinieckmmlvldnccbzm.supabase.co'
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraW5pZWNrbW1sdmxkbmNjYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNDM1NTQsImV4cCI6MjA5NTgxOTU1NH0.Mb82xSMu5KSwgju-rUEh-BBWNVLmJ3Fso5EZy4QeOvs'
 const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraW5pZWNrbW1sdmxkbmNjYnptIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDI0MzU1NCwiZXhwIjoyMDk1ODE5NTU0fQ.yADbKI4Hu8uguPT-KhFMdzuN4Cg-UNv9x5tykjBf4SY'
-
 const { createClient } = supabase
 const sb = createClient(SUPABASE_URL, ANON_KEY)
-const sbAdmin = createClient(SUPABASE_URL, SERVICE_KEY, {
-  auth: { autoRefreshToken: false, persistSession: false }
-})
+const sbAdmin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
 
 var todosUsuarios = []
 var restaurantesCache = []
+
+const TAG_CLASS = {nuevo:'tag-nuevo',preparando:'tag-preparando',en_camino:'tag-camino',listo:'tag-entregado',entregado:'tag-entregado',cancelado:'tag-cancelado'}
+const TAG_LABEL = {nuevo:'ESPERANDO',preparando:'PREPARANDO',en_camino:'EN CAMINO',listo:'LISTO',entregado:'ENTREGADO',cancelado:'CANCELADO'}
 
 // ─── SESIÓN ─────────────────────────────────────────────────────────────────
 sb.auth.getSession().then(function(result){
@@ -480,7 +500,7 @@ async function ingresar(){
   var pass = document.getElementById('login-pass').value
   var btn = document.getElementById('btn-ingresar')
   var err = document.getElementById('error-msg')
-  if(!email || !pass){ err.style.display='block'; err.textContent='Completá email y contraseña'; return }
+  if(!email||!pass){ err.style.display='block'; err.textContent='Completá email y contraseña'; return }
   btn.textContent = 'Ingresando...'
   err.style.display = 'none'
   var result = await sb.auth.signInWithPassword({ email: email, password: pass })
@@ -508,64 +528,95 @@ async function cerrarSesion(){
   document.getElementById('btn-ingresar').textContent = 'Ingresar al panel →'
 }
 
-// ─── TABS ───────────────────────────────────────────────────────────────────
+// ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(tab, el){
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active') })
   el.classList.add('active')
   var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios','categorias','zonas','cobros']
-  tabs.forEach(function(t){
-    document.getElementById('tab-'+t).classList[t === tab ? 'remove' : 'add']('hidden')
-  })
-  if(tab === 'usuarios') cargarUsuarios()
-  if(tab === 'cadetes') cargarCadetes()
-  if(tab === 'categorias') cargarCategorias()
-  if(tab === 'zonas') cargarRestosZonas()
-  if(tab === 'cobros'){ cargarRestosCobros() }
-  if(tab === 'pedidos') cargarPedidosAdmin()
-  if(tab === 'restaurantes') cargarRestaurantes()
+  tabs.forEach(function(t){ document.getElementById('tab-'+t).classList[t===tab?'remove':'add']('hidden') })
+  if(tab==='usuarios') cargarUsuarios()
+  if(tab==='cadetes') cargarCadetes()
+  if(tab==='categorias') cargarCategorias()
+  if(tab==='zonas') cargarRestosZonas()
+  if(tab==='cobros') cargarRestosCobros()
+  if(tab==='pedidos') cargarPedidosAdmin()
+  if(tab==='restaurantes') cargarRestaurantes()
 }
 
-// ─── DASHBOARD ──────────────────────────────────────────────────────────────
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
 async function cargarDashboard(){
-  var result = await sb.from('restaurantes').select('id,nombre,categoria,abierto')
-  if(result.data){
-    document.getElementById('stat-restos').textContent = result.data.length
-    var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
-    var html = ''
-    result.data.forEach(function(r){
-      var emoji = emojis[r.nombre] || '🍽'
-      var ab = r.abierto !== false
-      html += '<div class="rest-card"><div class="rest-head">'
-      html += '<div class="rest-emoji">'+emoji+'</div>'
-      html += '<div class="rest-info"><div class="rest-nombre">'+r.nombre+'</div>'
-      html += '<div class="rest-cat">'+(r.categoria||'')+'</div></div>'
-      html += '<span class="rest-badge '+(ab?'abierto':'cerrado')+'">'+(ab?'Abierto':'Cerrado')+'</span>'
-      html += '</div></div>'
-    })
-    document.getElementById('dash-restos').innerHTML = html || '<div class="loading-spinner">Sin restaurantes</div>'
+  var hoy = new Date().toISOString().split('T')[0]
+  var restos = await sb.from('restaurantes').select('id,nombre,categoria,abierto,logo_url')
+  var pedidosHoy = await sb.from('pedidos').select('total,estado').gte('created_at', hoy+'T00:00:00')
+  if(restos.data) document.getElementById('stat-restos').textContent = restos.data.length
+  if(pedidosHoy.data){
+    document.getElementById('stat-pedidos').textContent = pedidosHoy.data.length
+    var ingresos = pedidosHoy.data.filter(function(p){ return p.estado==='entregado' }).reduce(function(s,p){ return s+p.total },0)
+    document.getElementById('stat-ingresos').textContent = '$'+Math.round(ingresos/1000)+'k'
   }
+  var emojis = {'El Bodegón NKT':'🦞',"Colantonio's":'🍕','Kusama Sushi':'🍣'}
+  var html = (restos.data||[]).map(function(r){
+    var emoji = emojis[r.nombre]||'🍽'
+    var ab = r.abierto !== false
+    var logoHtml = r.logo_url ? '<img src="'+r.logo_url+'" alt=""/>' : emoji
+    return '<div class="rest-card"><div class="rest-head">'
+      +'<div class="rest-emoji">'+logoHtml+'</div>'
+      +'<div class="rest-info"><div class="rest-nombre">'+r.nombre+'</div>'
+      +'<div class="rest-cat">'+(r.categoria||'')+'</div></div>'
+      +'<span class="rest-badge '+(ab?'abierto':'cerrado')+'">'+(ab?'Abierto':'Cerrado')+'</span>'
+      +'</div></div>'
+  }).join('')
+  document.getElementById('dash-restos').innerHTML = html || '<div class="loading-spinner">Sin restaurantes</div>'
 }
 
-// ─── RESTAURANTES ───────────────────────────────────────────────────────────
+// ─── RESTAURANTES ─────────────────────────────────────────────────────────────
 async function cargarRestaurantes(){
   var lista = document.getElementById('lista-restaurantes')
   lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
   var result = await sb.from('restaurantes').select('*').order('nombre')
-  if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error cargando</div>'; return }
+  if(result.error){ lista.innerHTML='<div class="loading-spinner">Error cargando</div>'; return }
   restaurantesCache = result.data || []
-  if(!restaurantesCache.length){ lista.innerHTML = '<div class="loading-spinner">Sin restaurantes</div>'; return }
-  var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
+  if(!restaurantesCache.length){ lista.innerHTML='<div class="loading-spinner">Sin restaurantes</div>'; return }
+
+  var hoy = new Date().toISOString().split('T')[0]
+  // cargar pedidos de hoy para todos los restaurantes
+  var pedidosHoyRes = await sb.from('pedidos')
+    .select('restaurante_id,estado,total')
+    .gte('created_at', hoy+'T00:00:00')
+    .lte('created_at', hoy+'T23:59:59')
+  var pedidosHoy = pedidosHoyRes.data || []
+
+  var emojis = {'El Bodegón NKT':'🦞',"Colantonio's":'🍕','Kusama Sushi':'🍣'}
   var html = ''
   restaurantesCache.forEach(function(r){
-    var emoji = emojis[r.nombre] || '🍽'
+    var emoji = emojis[r.nombre]||'🍽'
     var ab = r.abierto !== false
+    var logoHtml = r.logo_url ? '<img src="'+r.logo_url+'" alt="'+r.nombre+'"/>' : emoji
+
+    // stats del día para este restaurante
+    var pResto = pedidosHoy.filter(function(p){ return p.restaurante_id === r.id })
+    var enEspera = pResto.filter(function(p){ return p.estado==='nuevo' })
+    var preparando = pResto.filter(function(p){ return p.estado==='preparando' })
+    var enCamino = pResto.filter(function(p){ return p.estado==='en_camino' })
+    var entregados = pResto.filter(function(p){ return p.estado==='entregado' })
+    var totalDia = pResto.reduce(function(s,p){ return s+p.total },0)
+
     html += '<div class="rest-card">'
     html += '<div class="rest-head">'
-    html += '<div class="rest-emoji">'+emoji+'</div>'
+    html += '<div class="rest-emoji">'+logoHtml+'</div>'
     html += '<div class="rest-info"><div class="rest-nombre">'+r.nombre+'</div>'
     html += '<div class="rest-cat">'+(r.categoria||'')+'</div></div>'
     html += '<span class="rest-badge '+(ab?'abierto':'cerrado')+'">'+(ab?'Abierto':'Cerrado')+'</span>'
     html += '</div>'
+
+    // stats del día
+    html += '<div class="rest-day-stats">'
+    html += '<div class="rest-day-stat espera"><div class="rest-day-stat-val">'+enEspera.length+'</div><div class="rest-day-stat-label">🕐 En espera</div></div>'
+    html += '<div class="rest-day-stat prep"><div class="rest-day-stat-val">'+preparando.length+'</div><div class="rest-day-stat-label">👨‍🍳 Preparando</div></div>'
+    html += '<div class="rest-day-stat camino"><div class="rest-day-stat-val">'+enCamino.length+'</div><div class="rest-day-stat-label">🏍 En camino</div></div>'
+    html += '<div class="rest-day-stat total"><div class="rest-day-stat-val">$'+Math.round(totalDia/1000)+'k</div><div class="rest-day-stat-label">💰 Total hoy</div></div>'
+    html += '</div>'
+
     html += '<div class="rest-actions">'
     html += '<button class="btn-sm btn-sm-naranja" onclick="editarResto(\''+r.id+'\')">✏️ Editar</button>'
     if(ab){
@@ -573,10 +624,21 @@ async function cargarRestaurantes(){
     } else {
       html += '<button class="btn-sm btn-sm-verde" onclick="toggleAbiertoResto(\''+r.id+'\',true)">▶️ Activar</button>'
     }
-    html += '<button class="btn-sm btn-sm-rojo" onclick="eliminarResto(\''+r.id+'\',\''+r.nombre.replace(/'/g,"\\'")+ '\')">🗑 Eliminar</button>'
+    html += '<button class="btn-sm btn-sm-azul" onclick="verPedidosResto(\''+r.id+'\')">📦 Ver pedidos</button>'
+    html += '<button class="btn-sm btn-sm-rojo" onclick="eliminarResto(\''+r.id+'\',\''+r.nombre.replace(/'/g,"\\'")+'\')">🗑</button>'
     html += '</div></div>'
   })
   lista.innerHTML = html
+}
+
+function verPedidosResto(restoId){
+  // ir a tab pedidos filtrado por este restaurante
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active') })
+  document.querySelectorAll('.nav-btn').forEach(function(b){ if(b.textContent==='Pedidos') b.classList.add('active') })
+  var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios','categorias','zonas','cobros']
+  tabs.forEach(function(t){ document.getElementById('tab-'+t).classList[t==='pedidos'?'remove':'add']('hidden') })
+  document.getElementById('pedidos-filtro-resto').value = restoId
+  cargarPedidosAdmin()
 }
 
 async function cargarRestaurantesSelect(){
@@ -592,37 +654,34 @@ async function cargarRestaurantesSelect(){
 
 function toggleRestSelect(){
   var rol = document.getElementById('new-rol').value
-  document.getElementById('rest-select-wrap').style.display = rol === 'encargado' ? 'block' : 'none'
+  document.getElementById('rest-select-wrap').style.display = rol==='encargado' ? 'block' : 'none'
 }
 
 function editarResto(id){
-  var r = restaurantesCache.find(function(x){ return x.id === id })
+  var r = restaurantesCache.find(function(x){ return x.id===id })
   if(!r) return
   document.getElementById('resto-id').value = r.id
-  document.getElementById('resto-nombre').value = r.nombre || ''
-  document.getElementById('resto-cat').value = r.categoria || ''
-  document.getElementById('resto-dir').value = r.direccion || ''
-  document.getElementById('resto-tmin').value = r.tiempo_entrega_min || 20
-  document.getElementById('resto-tmax').value = r.tiempo_entrega_max || 40
+  document.getElementById('resto-nombre').value = r.nombre||''
+  document.getElementById('resto-cat').value = r.categoria||''
+  document.getElementById('resto-dir').value = r.direccion||''
+  document.getElementById('resto-tmin').value = r.tiempo_entrega_min||20
+  document.getElementById('resto-tmax').value = r.tiempo_entrega_max||40
   document.getElementById('modal-resto-titulo').textContent = 'Editar restaurante'
-  document.getElementById('msg-resto-ok').style.display = 'none'
-  document.getElementById('msg-resto-err').style.display = 'none'
+  document.getElementById('msg-resto-ok').style.display='none'
+  document.getElementById('msg-resto-err').style.display='none'
   abrirModal('modal-resto')
 }
 
 async function toggleAbiertoResto(id, abierto){
   await sb.from('restaurantes').update({ abierto: abierto }).eq('id', id)
-  cargarRestaurantes()
-  cargarDashboard()
+  cargarRestaurantes(); cargarDashboard()
 }
 
 async function eliminarResto(id, nombre){
   if(!confirm('¿Eliminar "'+nombre+'"? Esta acción no se puede deshacer.')) return
   var result = await sb.from('restaurantes').delete().eq('id', id)
   if(result.error){ alert('Error: '+result.error.message); return }
-  cargarRestaurantes()
-  cargarDashboard()
-  cargarRestaurantesSelect()
+  cargarRestaurantes(); cargarDashboard(); cargarRestaurantesSelect()
 }
 
 async function guardarRestaurante(){
@@ -630,57 +689,44 @@ async function guardarRestaurante(){
   var nombre = document.getElementById('resto-nombre').value.trim()
   var cat = document.getElementById('resto-cat').value.trim()
   var dir = document.getElementById('resto-dir').value.trim()
-  var tmin = parseInt(document.getElementById('resto-tmin').value) || 20
-  var tmax = parseInt(document.getElementById('resto-tmax').value) || 40
+  var tmin = parseInt(document.getElementById('resto-tmin').value)||20
+  var tmax = parseInt(document.getElementById('resto-tmax').value)||40
   var msgOk = document.getElementById('msg-resto-ok')
   var msgErr = document.getElementById('msg-resto-err')
   msgOk.style.display='none'; msgErr.style.display='none'
   if(!nombre){ msgErr.style.display='block'; msgErr.textContent='Ingresá el nombre'; return }
-
-  var data = { nombre: nombre, categoria: cat, direccion: dir, tiempo_entrega_min: tmin, tiempo_entrega_max: tmax }
-  var result
-  if(id){
-    result = await sb.from('restaurantes').update(data).eq('id', id)
-  } else {
-    result = await sb.from('restaurantes').insert([data])
-  }
+  var data = { nombre:nombre, categoria:cat, direccion:dir, tiempo_entrega_min:tmin, tiempo_entrega_max:tmax }
+  var result = id ? await sb.from('restaurantes').update(data).eq('id',id) : await sb.from('restaurantes').insert([data])
   if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
-  msgOk.style.display='block'; msgOk.textContent = id ? '✓ Restaurante actualizado' : '✓ Restaurante agregado correctamente'
-  document.getElementById('resto-id').value = ''
-  document.getElementById('resto-nombre').value = ''
-  document.getElementById('resto-cat').value = ''
-  document.getElementById('resto-dir').value = ''
-  document.getElementById('modal-resto-titulo').textContent = 'Nuevo restaurante'
-  cargarRestaurantes()
-  cargarDashboard()
-  cargarRestaurantesSelect()
+  msgOk.style.display='block'; msgOk.textContent = id ? '✓ Restaurante actualizado' : '✓ Restaurante agregado'
+  document.getElementById('resto-id').value=''
+  document.getElementById('modal-resto-titulo').textContent='Nuevo restaurante'
+  cargarRestaurantes(); cargarDashboard(); cargarRestaurantesSelect()
 }
 
-// ─── USUARIOS ───────────────────────────────────────────────────────────────
+// ─── USUARIOS ─────────────────────────────────────────────────────────────────
 async function cargarUsuarios(){
   var lista = document.getElementById('lista-usuarios')
   lista.innerHTML = '<div class="loading-spinner">Cargando usuarios...</div>'
   try {
     var result = await sbAdmin.auth.admin.listUsers()
-    if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error: '+result.error.message+'</div>'; return }
+    if(result.error){ lista.innerHTML='<div class="loading-spinner">Error: '+result.error.message+'</div>'; return }
     todosUsuarios = result.data.users
     document.getElementById('stat-usuarios').textContent = todosUsuarios.length
     renderUsuarios(todosUsuarios)
-  } catch(e) {
-    lista.innerHTML = '<div class="loading-spinner">Error: ' + e.message + '</div>'
-  }
+  } catch(e){ lista.innerHTML='<div class="loading-spinner">Error: '+e.message+'</div>' }
 }
 
 function renderUsuarios(users){
   var lista = document.getElementById('lista-usuarios')
-  if(!users.length){ lista.innerHTML = '<div class="loading-spinner">No hay usuarios</div>'; return }
+  if(!users.length){ lista.innerHTML='<div class="loading-spinner">No hay usuarios</div>'; return }
   var html = ''
   users.forEach(function(u){
-    var iniciales = (u.email || '??').substring(0,2).toUpperCase()
+    var iniciales = (u.email||'??').substring(0,2).toUpperCase()
     var pausado = u.banned_until && new Date(u.banned_until) > new Date()
     var colors = ['#FF4D00','#2D6A2D','#1565C0','#7B1FA2']
     var color = colors[Math.abs(u.email.charCodeAt(0)) % colors.length]
-    var meta = u.user_metadata || {}
+    var meta = u.user_metadata||{}
     var rolLabel = meta.rol ? ' · '+meta.rol : ''
     var restoLabel = meta.resto_nombre ? ' ('+meta.resto_nombre+')' : ''
     html += '<div class="user-card"><div class="user-head">'
@@ -702,14 +748,11 @@ function renderUsuarios(users){
 }
 
 function filtrarUsuarios(rol){
-  if(rol === 'todos'){ renderUsuarios(todosUsuarios); return }
-  var filtrados = todosUsuarios.filter(function(u){
-    return u.user_metadata && u.user_metadata.rol === rol
-  })
+  if(rol==='todos'){ renderUsuarios(todosUsuarios); return }
+  var filtrados = todosUsuarios.filter(function(u){ return u.user_metadata && u.user_metadata.rol===rol })
   renderUsuarios(filtrados.length ? filtrados : todosUsuarios)
 }
 
-// ─── CREAR USUARIO ── FIX: guarda resto_id en metadata ──────────────────────
 async function crearUsuario(){
   var email = document.getElementById('new-email').value.trim()
   var pass = document.getElementById('new-pass').value
@@ -718,94 +761,78 @@ async function crearUsuario(){
   var msgOk = document.getElementById('msg-nuevo-ok')
   var msgErr = document.getElementById('msg-nuevo-err')
   msgOk.style.display='none'; msgErr.style.display='none'
-  if(!email || !pass){ msgErr.style.display='block'; msgErr.textContent='Completá email y contraseña'; return }
-
-  var metadata = { nombre: nombre, rol: rol }
-
-  // ── FIX: si es encargado, guardar el id Y nombre del restaurante ──
-  if(rol === 'encargado'){
+  if(!email||!pass){ msgErr.style.display='block'; msgErr.textContent='Completá email y contraseña'; return }
+  var metadata = { nombre:nombre, rol:rol }
+  if(rol==='encargado'){
     var restoSelectVal = document.getElementById('new-rest').value
     var restoOption = document.getElementById('new-rest')
     var restoNombre = restoOption.options[restoOption.selectedIndex] ? restoOption.options[restoOption.selectedIndex].text : ''
     if(restoSelectVal){
       metadata.resto_id = restoSelectVal
       metadata.resto_nombre = restoNombre
-      // emoji hardcodeado por nombre
-      var emojis = { 'El Bodegón NKT':'🦞', "Colantonio's":'🍕', 'Kusama Sushi':'🍣' }
-      metadata.resto_emoji = emojis[restoNombre] || '🍽'
-      // categoria del restaurante
-      var restoData = restaurantesCache.find(function(r){ return r.id === restoSelectVal })
-      if(restoData) metadata.resto_cat = restoData.categoria || ''
+      var emojis = {'El Bodegón NKT':'🦞',"Colantonio's":'🍕','Kusama Sushi':'🍣'}
+      metadata.resto_emoji = emojis[restoNombre]||'🍽'
+      var restoData = restaurantesCache.find(function(r){ return r.id===restoSelectVal })
+      if(restoData) metadata.resto_cat = restoData.categoria||''
     }
   }
-
-  var result = await sbAdmin.auth.admin.createUser({
-    email: email, password: pass, email_confirm: true,
-    user_metadata: metadata
-  })
+  var result = await sbAdmin.auth.admin.createUser({ email:email, password:pass, email_confirm:true, user_metadata:metadata })
   if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
   msgOk.style.display='block'; msgOk.textContent='✓ Usuario creado correctamente'
-  document.getElementById('new-email').value = ''
-  document.getElementById('new-pass').value = ''
-  document.getElementById('new-nombre').value = ''
+  document.getElementById('new-email').value=''
+  document.getElementById('new-pass').value=''
+  document.getElementById('new-nombre').value=''
   cargarUsuarios()
 }
 
-// ─── CADETES ────────────────────────────────────────────────────────────────
 async function cargarCadetes(){
   var lista = document.getElementById('lista-cadetes')
   lista.innerHTML = '<div class="loading-spinner">Cargando cadetes...</div>'
   try {
     var result = await sbAdmin.auth.admin.listUsers()
-    if(result.error){ lista.innerHTML = '<div class="loading-spinner">Error</div>'; return }
-    var cadetes = result.data.users.filter(function(u){ return u.user_metadata && u.user_metadata.rol === 'cadete' })
-    if(!cadetes.length){ lista.innerHTML = '<div class="loading-spinner">No hay cadetes registrados</div>'; return }
-    var html = ''
-    cadetes.forEach(function(u){
-      html += '<div class="user-card"><div class="user-head">'
-      html += '<div class="user-avatar" style="background:#1A1A1A">🏍</div>'
-      html += '<div class="user-info"><div class="user-nombre">'+u.email+'</div>'
-      html += '<div class="user-email">'+(u.user_metadata.nombre||'Sin nombre')+'</div></div>'
-      html += '<span class="user-badge-activo">Cadete</span>'
-      html += '</div></div>'
-    })
-    lista.innerHTML = html
-  } catch(e) {
-    lista.innerHTML = '<div class="loading-spinner">Error: ' + e.message + '</div>'
-  }
+    if(result.error){ lista.innerHTML='<div class="loading-spinner">Error</div>'; return }
+    var cadetes = result.data.users.filter(function(u){ return u.user_metadata && u.user_metadata.rol==='cadete' })
+    if(!cadetes.length){ lista.innerHTML='<div class="loading-spinner">No hay cadetes registrados</div>'; return }
+    lista.innerHTML = cadetes.map(function(u){
+      return '<div class="user-card"><div class="user-head">'
+        +'<div class="user-avatar" style="background:#1A1A1A">🏍</div>'
+        +'<div class="user-info"><div class="user-nombre">'+u.email+'</div>'
+        +'<div class="user-email">'+(u.user_metadata.nombre||'Sin nombre')+'</div></div>'
+        +'<span class="user-badge-activo">Cadete</span>'
+        +'</div></div>'
+    }).join('')
+  } catch(e){ lista.innerHTML='<div class="loading-spinner">Error: '+e.message+'</div>' }
 }
 
-// ─── CAMBIAR CONTRASEÑA ─────────────────────────────────────────────────────
 function abrirCambiarPass(userId, email){
   document.getElementById('pass-user-id').value = userId
   document.getElementById('pass-user-nombre').value = email
   document.getElementById('nueva-pass').value = ''
-  document.getElementById('msg-pass-ok').style.display = 'none'
-  document.getElementById('msg-pass-err').style.display = 'none'
+  document.getElementById('msg-pass-ok').style.display='none'
+  document.getElementById('msg-pass-err').style.display='none'
   abrirModal('modal-cambiar-pass')
 }
 
 async function cambiarPassword(){
   var userId = document.getElementById('pass-user-id').value
   var nuevaPass = document.getElementById('nueva-pass').value
-  var msgOk = document.getElementById('msg-pass-ok')
-  var msgErr = document.getElementById('msg-pass-err')
+  var msgOk = document.getElementById('msg-pass-ok'), msgErr = document.getElementById('msg-pass-err')
   msgOk.style.display='none'; msgErr.style.display='none'
-  if(!nuevaPass || nuevaPass.length < 6){ msgErr.style.display='block'; msgErr.textContent='Mínimo 6 caracteres'; return }
-  var result = await sbAdmin.auth.admin.updateUserById(userId, { password: nuevaPass })
+  if(!nuevaPass||nuevaPass.length<6){ msgErr.style.display='block'; msgErr.textContent='Mínimo 6 caracteres'; return }
+  var result = await sbAdmin.auth.admin.updateUserById(userId, { password:nuevaPass })
   if(result.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+result.error.message; return }
   msgOk.style.display='block'; msgOk.textContent='✓ Contraseña actualizada'
 }
 
 async function pausarUsuario(userId){
   if(!confirm('¿Pausar este usuario?')) return
-  var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration: '87600h' })
+  var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration:'87600h' })
   if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
 }
 
 async function reactivarUsuario(userId){
-  var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration: 'none' })
+  var result = await sbAdmin.auth.admin.updateUserById(userId, { ban_duration:'none' })
   if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
 }
@@ -817,15 +844,11 @@ async function eliminarUsuario(userId, email){
   cargarUsuarios()
 }
 
-// ─── PEDIDOS ADMIN ───────────────────────────────────────────────────────────
-var tagClassAdmin = {nuevo:'tag-nuevo',preparando:'tag-preparando',camino:'tag-camino',entregado:'tag-entregado',cancelado:'tag-cancelado'}
-var tagLabelAdmin = {nuevo:'NUEVO',preparando:'PREPARANDO',camino:'EN CAMINO',entregado:'ENTREGADO',cancelado:'CANCELADO'}
-
+// ─── PEDIDOS ADMIN ────────────────────────────────────────────────────────────
 async function cargarPedidosAdmin(){
   var lista = document.getElementById('lista-pedidos')
   lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
-  
-  // cargar restaurantes en filtro
+
   var restoSel = document.getElementById('pedidos-filtro-resto')
   if(restoSel.options.length <= 1){
     var rr = await sb.from('restaurantes').select('id,nombre').order('nombre')
@@ -842,7 +865,8 @@ async function cargarPedidosAdmin(){
   var restoId = document.getElementById('pedidos-filtro-resto').value
   var estado = document.getElementById('pedidos-filtro-estado').value
 
-  var query = sb.from('pedidos').select('*,restaurantes(nombre),perfiles(nombre,telefono)')
+  var query = sb.from('pedidos')
+    .select('*,restaurantes(nombre),perfiles(nombre,telefono)')
     .gte('created_at', fecha+'T00:00:00')
     .lte('created_at', fecha+'T23:59:59')
     .order('created_at', {ascending:false})
@@ -853,31 +877,49 @@ async function cargarPedidosAdmin(){
   if(res.error){ lista.innerHTML='<div class="loading-spinner">Error: '+res.error.message+'</div>'; return }
   if(!res.data||!res.data.length){ lista.innerHTML='<div class="loading-spinner">Sin pedidos para esta fecha</div>'; return }
 
-  lista.innerHTML = res.data.map(function(p){
-    var clienteNombre = p.perfiles ? p.perfiles.nombre : 'Cliente'
-    var clienteTel = p.perfiles && p.perfiles.telefono ? ' · '+p.perfiles.telefono : ''
+  var pedidos = res.data
+
+  // Resumen del día
+  var resumen = document.getElementById('pedidos-resumen-dia')
+  var totalEspera = pedidos.filter(function(p){ return p.estado==='nuevo' }).length
+  var totalPrep = pedidos.filter(function(p){ return p.estado==='preparando' }).length
+  var totalCamino = pedidos.filter(function(p){ return p.estado==='en_camino' }).length
+  var totalEntregado = pedidos.filter(function(p){ return p.estado==='entregado' })
+  var montoEntregado = totalEntregado.reduce(function(s,p){ return s+p.total },0)
+  resumen.innerHTML = ''
+    +'<div style="background:#FFF0E5;border-radius:12px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:#FF8C00">'+totalEspera+'</div><div style="font-size:10px;color:#888">🕐 Esperando</div></div>'
+    +'<div style="background:#FFF9E5;border-radius:12px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:#B8860B">'+totalPrep+'</div><div style="font-size:10px;color:#888">👨‍🍳 Preparando</div></div>'
+    +'<div style="background:#E3F2FD;border-radius:12px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:#1565C0">'+totalCamino+'</div><div style="font-size:10px;color:#888">🏍 En camino</div></div>'
+    +'<div style="background:#FFF4EF;border-radius:12px;padding:12px;text-align:center"><div style="font-size:16px;font-weight:800;color:#FF4D00">$'+Math.round(montoEntregado/1000)+'k</div><div style="font-size:10px;color:#888">💰 Entregado</div></div>'
+
+  lista.innerHTML = pedidos.map(function(p){
+    var clienteNombre = (p.perfiles && p.perfiles.nombre) ? p.perfiles.nombre : 'Sin nombre'
+    var clienteTel = (p.perfiles && p.perfiles.telefono) ? p.perfiles.telefono : ''
     var restoNombre = p.restaurantes ? p.restaurantes.nombre : '–'
-    var hora = new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})
+    var hora = new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
+    var nroPedido = p.id.substring(0,8).toUpperCase()
     var items = (p.items||[]).map(function(i){ return i.qty+'× '+i.nombre }).join(', ')
-    return '<div class="pedido-card" style="margin-bottom:10px">'
-      +'<div class="pedido-head"><div>'
-      +'<div style="display:flex;align-items:center;gap:6px">'
-      +'<span class="tag '+(tagClassAdmin[p.estado]||'tag-nuevo')+'">'+(tagLabelAdmin[p.estado]||p.estado.toUpperCase())+'</span>'
-      +'<span style="font-size:11px;color:#888">'+restoNombre+'</span>'
+    return '<div class="pedido-admin-card">'
+      +'<div class="pedido-admin-head">'
+      +'<div>'
+      +'<div class="pedido-admin-num">#'+nroPedido+' · '+restoNombre+'</div>'
+      +'<div class="pedido-admin-cliente">'+clienteNombre+'</div>'
+      +(clienteTel?'<div class="pedido-admin-tel">📞 '+clienteTel+'</div>':'')
+      +'<div style="margin-top:6px"><span class="tag '+(TAG_CLASS[p.estado]||'tag-nuevo')+'">'+(TAG_LABEL[p.estado]||p.estado.toUpperCase())+'</span></div>'
       +'</div>'
-      +'<div class="pedido-cliente">'+clienteNombre+(clienteTel?' · '+clienteTel:'')+'</div>'
-      +'</div><div class="pedido-hora">'+hora+'</div></div>'
-      +'<div class="pedido-items" style="font-size:12px">'+items+'</div>'
-      +'<div style="padding:8px 14px;font-size:12px;color:#888;border-bottom:1px solid #FFE8DC">'
-      +'📍 '+p.direccion_entrega+' &nbsp;·&nbsp; 💳 '+p.metodo_pago
+      +'<div>'
+      +'<div class="pedido-admin-monto">$'+Number(p.total).toLocaleString('es-AR')+'</div>'
+      +'<div class="pedido-admin-hora">'+hora+'</div>'
+      +(p.costo_envio>0?'<div style="font-size:10px;color:#1565C0;text-align:right">Envío: $'+Number(p.costo_envio).toLocaleString('es-AR')+'</div>':'')
       +'</div>'
-      +'<div class="pedido-footer">'
-      +'<div><div class="pedido-total">$'+Number(p.total).toLocaleString('es-AR')+'</div>'
-      +(p.costo_envio>0?'<div style="font-size:11px;color:#888">Envío: $'+Number(p.costo_envio).toLocaleString('es-AR')+'</div>':'')
       +'</div>'
-      +'<div style="display:flex;gap:6px">'
-      +(p.ticket_url?'<button class="btn-sm btn-sm-naranja" data-url="'+p.ticket_url+'" onclick="window.open(this.dataset.url)">📎 Comprobante</button>':'')
-      +'</div></div></div>'
+      +'<div class="pedido-admin-items">'+items+'</div>'
+      +'<div class="pedido-admin-footer">'
+      +'<span>📍 '+p.direccion_entrega+'</span>'
+      +'<span>💳 '+p.metodo_pago+'</span>'
+      +(p.ticket_url?'<button class="btn-sm btn-sm-naranja" onclick="window.open(\''+p.ticket_url+'\')">📎 Comprobante</button>':'')
+      +'</div>'
+      +'</div>'
   }).join('')
 }
 
@@ -886,72 +928,51 @@ var cobrosRestoActual = null
 
 async function cargarRestosCobros(){
   var select = document.getElementById('cobros-resto-select')
-  var selectPed = document.getElementById('pedidos-filtro-resto')
-  var res = await sb.from('restaurantes').select('id,nombre,comision_porcentaje,cobro_periodo').order('nombre')
+  var res = await sb.from('restaurantes').select('id,nombre').order('nombre')
   if(res.data){
-    var opts = '<option value="">-- Elegí un restaurante --</option>'
+    select.innerHTML = '<option value="">-- Elegí un restaurante --</option>'
       + res.data.map(function(r){ return '<option value="'+r.id+'">'+r.nombre+'</option>' }).join('')
-    select.innerHTML = opts
   }
 }
 
-async function cargarCobrosResto(restoId){
-  if(!restoId){ 
-    document.getElementById('cobros-resumen').style.display='none'
-    document.getElementById('cobros-empty').style.display='block'
-    return 
-  }
+function seleccionarRestoCobro(restoId){
   cobrosRestoActual = restoId
-  document.getElementById('cobros-resumen').style.display='block'
+  if(!restoId){
+    document.getElementById('cobros-panel').style.display='none'
+    document.getElementById('cobros-empty').style.display='block'
+    return
+  }
+  document.getElementById('cobros-panel').style.display='block'
   document.getElementById('cobros-empty').style.display='none'
+  cargarCobrosResto()
+}
 
-  // cargar config del resto
-  var restoRes = await sb.from('restaurantes').select('comision_porcentaje,cobro_periodo').eq('id',restoId).single()
+async function cargarCobrosResto(){
+  if(!cobrosRestoActual) return
+  var restoRes = await sb.from('restaurantes').select('comision_porcentaje,cobro_periodo').eq('id',cobrosRestoActual).single()
   if(restoRes.data){
     var pctEl = document.getElementById('cobro-pct-input')
-    var perEl = document.getElementById('cobro-periodo-config')
     if(pctEl) pctEl.value = restoRes.data.comision_porcentaje || 8
-    if(perEl) perEl.value = restoRes.data.cobro_periodo || 'semanal'
   }
-
-  // calcular fechas según período
-  var periodo = document.getElementById('cobros-periodo').value
-  var fechaDesde, fechaHasta = new Date()
-  if(periodo === 'semana'){
-    fechaDesde = new Date(); fechaDesde.setDate(fechaDesde.getDate() - fechaDesde.getDay())
-  } else if(periodo === 'quincena'){
-    fechaDesde = new Date()
-    fechaDesde.setDate(fechaHasta.getDate() <= 15 ? 1 : 16)
-  } else if(periodo === 'mes'){
-    fechaDesde = new Date(fechaHasta.getFullYear(), fechaHasta.getMonth(), 1)
-  } else {
-    fechaDesde = new Date('2020-01-01')
-  }
-
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value)||8
+  var hoy = new Date()
+  var desde = new Date(hoy); desde.setDate(desde.getDate()-30)
   var res = await sb.from('pedidos').select('*,perfiles(nombre)')
-    .eq('restaurante_id', restoId)
+    .eq('restaurante_id', cobrosRestoActual)
     .eq('estado', 'entregado')
-    .gte('created_at', fechaDesde.toISOString())
+    .gte('created_at', desde.toISOString())
     .order('created_at', {ascending:false})
-
-  var pedidos = res.data || []
+  var pedidos = res.data||[]
   var totalVentas = pedidos.reduce(function(s,p){ return s+(p.subtotal||p.total) },0)
-  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
   var comision = Math.round(totalVentas * pct / 100)
-
   document.getElementById('cobro-pedidos').textContent = pedidos.length
   document.getElementById('cobro-ventas').textContent = '$'+Math.round(totalVentas/1000)+'k'
   document.getElementById('cobro-comision').textContent = '$'+Number(comision).toLocaleString('es-AR')
-
-  if(!pedidos.length){
-    document.getElementById('cobros-detalle').innerHTML = '<div class="loading-spinner">Sin pedidos entregados en este período</div>'
-    return
-  }
-
+  if(!pedidos.length){ document.getElementById('cobros-detalle').innerHTML='<div class="loading-spinner">Sin pedidos entregados en este período</div>'; return }
   document.getElementById('cobros-detalle').innerHTML = pedidos.map(function(p){
-    var fecha = new Date(p.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
-    var cliente = p.perfiles ? p.perfiles.nombre : 'Cliente'
-    var subtotal = p.subtotal || p.total
+    var fecha = new Date(p.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
+    var cliente = p.perfiles ? p.perfiles.nombre : 'Sin nombre'
+    var subtotal = p.subtotal||p.total
     var comisionPed = Math.round(subtotal * pct / 100)
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border-radius:10px;margin-bottom:6px;font-size:12px">'
       +'<div><div style="font-weight:600;color:#1A1A1A">'+cliente+'</div><div style="color:#aaa">'+fecha+'</div></div>'
@@ -963,26 +984,21 @@ async function cargarCobrosResto(restoId){
 
 async function guardarConfigCobro(){
   if(!cobrosRestoActual) return
-  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
-  var periodo = document.getElementById('cobro-periodo-config').value
-  var res = await sb.from('restaurantes').update({comision_porcentaje:pct, cobro_periodo:periodo}).eq('id',cobrosRestoActual)
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value)||8
+  var res = await sb.from('restaurantes').update({comision_porcentaje:pct}).eq('id',cobrosRestoActual)
   var msg = document.getElementById('cobro-msg')
   msg.style.display='block'; msg.textContent = res.error ? 'Error: '+res.error.message : '✓ Configuración guardada'
   setTimeout(function(){ msg.style.display='none' },2000)
-  cargarCobrosResto(cobrosRestoActual)
 }
 
 async function marcarCobrado(){
-  if(!cobrosRestoActual || !confirm('¿Marcar este período como cobrado?')) return
+  if(!cobrosRestoActual||!confirm('¿Marcar este período como cobrado?')) return
   var msg = document.getElementById('cobro-msg')
-  // registrar el cobro
-  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
-  var totalEl = document.getElementById('cobro-comision').textContent
   msg.style.display='block'; msg.textContent='✓ Período marcado como cobrado'
   setTimeout(function(){ msg.style.display='none' },3000)
 }
 
-// ─── ZONAS DE ENVÍO ──────────────────────────────────────────────────────────
+// ─── ZONAS ────────────────────────────────────────────────────────────────────
 var zonaRestoSeleccionado = null
 var zonasCache = []
 
@@ -991,9 +1007,7 @@ async function cargarRestosZonas(){
   var res = await sb.from('restaurantes').select('id,nombre').order('nombre')
   if(res.data){
     select.innerHTML = '<option value="">-- Elegí un restaurante --</option>'
-      + res.data.map(function(r){
-          return '<option value="'+r.id+'">'+r.nombre+'</option>'
-        }).join('')
+      + res.data.map(function(r){ return '<option value="'+r.id+'">'+r.nombre+'</option>' }).join('')
   }
 }
 
@@ -1004,30 +1018,22 @@ async function cargarZonasResto(restoId){
   zonaRestoSeleccionado = restoId
   form.style.display = 'block'
   lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
-  
-  // cargar coordenadas del resto
   var restoRes = await sb.from('restaurantes').select('lat,lng').eq('id',restoId).single()
   if(restoRes.data){
-    var latEl = document.getElementById('resto-lat')
-    var lngEl = document.getElementById('resto-lng')
-    if(latEl) latEl.value = restoRes.data.lat || ''
-    if(lngEl) lngEl.value = restoRes.data.lng || ''
+    var latEl = document.getElementById('resto-lat'), lngEl = document.getElementById('resto-lng')
+    if(latEl) latEl.value = restoRes.data.lat||''
+    if(lngEl) lngEl.value = restoRes.data.lng||''
   }
-
   var res = await sb.from('zonas_envio').select('*').eq('restaurante_id',restoId).order('orden')
-  zonasCache = res.data || []
+  zonasCache = res.data||[]
   if(!zonasCache.length){ lista.innerHTML='<div class="loading-spinner">Sin zonas configuradas</div>'; return }
   lista.innerHTML = zonasCache.map(function(z){
-    return '<div class="zona-card">'
-      +'<div class="zona-head">'
+    return '<div class="zona-card"><div class="zona-head">'
       +'<div class="zona-badge">'+z.radio_km+'<span style="font-size:9px">km</span></div>'
-      +'<div class="zona-info">'
-      +'<div class="zona-nombre">'+z.nombre+'</div>'
-      +'<div class="zona-detail">Hasta '+z.radio_km+' km del local</div>'
-      +'</div>'
+      +'<div class="zona-info"><div class="zona-nombre">'+z.nombre+'</div>'
+      +'<div class="zona-detail">Hasta '+z.radio_km+' km del local</div></div>'
       +'<div class="zona-precio">$'+Number(z.precio).toLocaleString('es-AR')+'</div>'
-      +'</div>'
-      +'<div class="zona-actions">'
+      +'</div><div class="zona-actions">'
       +'<button class="btn-sm btn-sm-naranja" data-id="'+z.id+'" onclick="editarZona(this.dataset.id)">✏️ Editar</button>'
       +'<button class="btn-sm btn-sm-rojo" data-id="'+z.id+'" data-nombre="'+z.nombre+'" onclick="eliminarZona(this.dataset.id,this.dataset.nombre)">🗑 Eliminar</button>'
       +'</div></div>'
@@ -1035,12 +1041,12 @@ async function cargarZonasResto(restoId){
 }
 
 function abrirModalZona(){
-  document.getElementById('zona-id').value = ''
-  document.getElementById('zona-nombre').value = ''
-  document.getElementById('zona-radio').value = ''
-  document.getElementById('zona-precio').value = ''
-  document.getElementById('zona-orden').value = (zonasCache.length+1).toString()
-  document.getElementById('modal-zona-titulo').textContent = 'Nueva zona'
+  document.getElementById('zona-id').value=''
+  document.getElementById('zona-nombre').value=''
+  document.getElementById('zona-radio').value=''
+  document.getElementById('zona-precio').value=''
+  document.getElementById('zona-orden').value=(zonasCache.length+1).toString()
+  document.getElementById('modal-zona-titulo').textContent='Nueva zona'
   document.getElementById('msg-zona-ok').style.display='none'
   document.getElementById('msg-zona-err').style.display='none'
   abrirModal('modal-zona')
@@ -1049,12 +1055,12 @@ function abrirModalZona(){
 function editarZona(id){
   var z = zonasCache.find(function(x){ return x.id===id })
   if(!z) return
-  document.getElementById('zona-id').value = z.id
-  document.getElementById('zona-nombre').value = z.nombre||''
-  document.getElementById('zona-radio').value = z.radio_km||''
-  document.getElementById('zona-precio').value = z.precio||''
-  document.getElementById('zona-orden').value = z.orden||1
-  document.getElementById('modal-zona-titulo').textContent = 'Editar zona'
+  document.getElementById('zona-id').value=z.id
+  document.getElementById('zona-nombre').value=z.nombre||''
+  document.getElementById('zona-radio').value=z.radio_km||''
+  document.getElementById('zona-precio').value=z.precio||''
+  document.getElementById('zona-orden').value=z.orden||1
+  document.getElementById('modal-zona-titulo').textContent='Editar zona'
   document.getElementById('msg-zona-ok').style.display='none'
   document.getElementById('msg-zona-err').style.display='none'
   abrirModal('modal-zona')
@@ -1066,15 +1072,12 @@ async function guardarZona(){
   var radio = parseFloat(document.getElementById('zona-radio').value)
   var precio = parseFloat(document.getElementById('zona-precio').value)
   var orden = parseInt(document.getElementById('zona-orden').value)||1
-  var msgOk = document.getElementById('msg-zona-ok')
-  var msgErr = document.getElementById('msg-zona-err')
+  var msgOk = document.getElementById('msg-zona-ok'), msgErr = document.getElementById('msg-zona-err')
   msgOk.style.display='none'; msgErr.style.display='none'
   if(!nombre||!radio||!precio){ msgErr.style.display='block'; msgErr.textContent='Completá todos los campos'; return }
   if(!zonaRestoSeleccionado){ msgErr.style.display='block'; msgErr.textContent='Seleccioná un restaurante'; return }
   var data = { restaurante_id:zonaRestoSeleccionado, nombre:nombre, radio_km:radio, precio:precio, orden:orden }
-  var res = id
-    ? await sb.from('zonas_envio').update(data).eq('id',id)
-    : await sb.from('zonas_envio').insert([data])
+  var res = id ? await sb.from('zonas_envio').update(data).eq('id',id) : await sb.from('zonas_envio').insert([data])
   if(res.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+res.error.message; return }
   msgOk.style.display='block'; msgOk.textContent='✓ Zona guardada'
   setTimeout(function(){ cerrarModal('modal-zona'); cargarZonasResto(zonaRestoSeleccionado) },1000)
@@ -1091,40 +1094,33 @@ async function guardarCoordenadas(){
   var lat = parseFloat(document.getElementById('resto-lat').value)
   var lng = parseFloat(document.getElementById('resto-lng').value)
   if(!lat||!lng){ alert('Ingresá latitud y longitud'); return }
-  var res = await sb.from('restaurantes').update({lat:lat, lng:lng}).eq('id',zonaRestoSeleccionado)
+  var res = await sb.from('restaurantes').update({lat:lat,lng:lng}).eq('id',zonaRestoSeleccionado)
   var msg = document.getElementById('coord-msg')
   msg.style.display = res.error ? 'none' : 'block'
   if(res.error) alert('Error: '+res.error.message)
   setTimeout(function(){ msg.style.display='none' },2000)
 }
 
-// ─── CATEGORÍAS ──────────────────────────────────────────────────────────────
+// ─── CATEGORÍAS ───────────────────────────────────────────────────────────────
 var categoriasCache = []
-var catColorSeleccionado = '#FF4D00'
-var catColorBgSeleccionado = '#FFF0E5'
 
 async function cargarCategorias(){
   var lista = document.getElementById('lista-categorias')
   lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
   var res = await sb.from('categorias_locales').select('*').order('orden')
   if(res.error){ lista.innerHTML='<div class="loading-spinner">Error: '+res.error.message+'</div>'; return }
-  categoriasCache = res.data || []
+  categoriasCache = res.data||[]
   if(!categoriasCache.length){ lista.innerHTML='<div class="loading-spinner">Sin categorías</div>'; return }
   lista.innerHTML = categoriasCache.map(function(c){
-    return '<div class="cat-admin-card">'
-      +'<div class="cat-admin-head">'
-      +'<div class="cat-admin-icon" style="background:'+c.color_bg+'">'+c.emoji+'</div>'
-      +'<div class="cat-admin-info">'
-      +'<div class="cat-admin-nombre">'+c.nombre+'</div>'
-      +'<div class="cat-admin-id">Orden: '+c.orden+' · '+(c.activa?'Activa':'Inactiva')+'</div>'
-      +'</div>'
+    return '<div class="cat-admin-card"><div class="cat-admin-head">'
+      +'<div class="cat-admin-icon" style="background:'+(c.color_bg||'#f5f5f5')+'">'+c.emoji+'</div>'
+      +'<div class="cat-admin-info"><div class="cat-admin-nombre">'+c.nombre+'</div>'
+      +'<div class="cat-admin-id">Orden: '+c.orden+' · '+(c.activa?'Activa':'Inactiva')+'</div></div>'
       +'<div style="display:flex;gap:6px">'
       +(c.activa
-        ? '<button class="btn-sm btn-sm-gris" data-id="'+c.id+'" data-val="false" onclick="toggleCat(this.dataset.id,false)">⏸</button>'
-        : '<button class="btn-sm btn-sm-verde" data-id="'+c.id+'" data-val="true" onclick="toggleCat(this.dataset.id,true)">▶️</button>'
-      )
-      +'</div>'
-      +'</div>'
+        ? '<button class="btn-sm btn-sm-gris" data-id="'+c.id+'" onclick="toggleCat(this.dataset.id,false)">⏸</button>'
+        : '<button class="btn-sm btn-sm-verde" data-id="'+c.id+'" onclick="toggleCat(this.dataset.id,true)">▶️</button>'
+      )+'</div></div>'
       +'<div class="cat-admin-actions">'
       +'<button class="btn-sm btn-sm-naranja" data-id="'+c.id+'" onclick="editarCategoria(this.dataset.id)">✏️ Editar</button>'
       +'<button class="btn-sm btn-sm-rojo" data-id="'+c.id+'" data-nombre="'+c.nombre+'" onclick="eliminarCategoria(this.dataset.id,this.dataset.nombre)">🗑 Eliminar</button>'
@@ -1133,13 +1129,13 @@ async function cargarCategorias(){
 }
 
 function abrirModalNuevaCategoria(){
-  document.getElementById('cat-id').value = ''
-  document.getElementById('cat-nombre').value = ''
-  document.getElementById('cat-emoji').value = ''
-  document.getElementById('cat-orden').value = (categoriasCache.length+1).toString()
-  document.getElementById('cat-color').value = '#FF4D00'
-  document.getElementById('cat-color-bg').value = '#FFF0E5'
-  document.getElementById('modal-cat-titulo').textContent = 'Nueva categoría'
+  document.getElementById('cat-id').value=''
+  document.getElementById('cat-nombre').value=''
+  document.getElementById('cat-emoji').value=''
+  document.getElementById('cat-orden').value=(categoriasCache.length+1).toString()
+  document.getElementById('cat-color').value='#FF4D00'
+  document.getElementById('cat-color-bg').value='#FFF0E5'
+  document.getElementById('modal-cat-titulo').textContent='Nueva categoría'
   document.getElementById('msg-cat-ok').style.display='none'
   document.getElementById('msg-cat-err').style.display='none'
   document.querySelectorAll('.color-opt').forEach(function(el,i){ el.classList.toggle('selected',i===0) })
@@ -1149,18 +1145,16 @@ function abrirModalNuevaCategoria(){
 function editarCategoria(id){
   var c = categoriasCache.find(function(x){ return x.id===id })
   if(!c) return
-  document.getElementById('cat-id').value = c.id
-  document.getElementById('cat-nombre').value = c.nombre
-  document.getElementById('cat-emoji').value = c.emoji||''
-  document.getElementById('cat-orden').value = c.orden||1
-  document.getElementById('cat-color').value = c.color||'#FF4D00'
-  document.getElementById('cat-color-bg').value = c.color_bg||'#FFF0E5'
-  document.getElementById('modal-cat-titulo').textContent = 'Editar categoría'
+  document.getElementById('cat-id').value=c.id
+  document.getElementById('cat-nombre').value=c.nombre
+  document.getElementById('cat-emoji').value=c.emoji||''
+  document.getElementById('cat-orden').value=c.orden||1
+  document.getElementById('cat-color').value=c.color||'#FF4D00'
+  document.getElementById('cat-color-bg').value=c.color_bg||'#FFF0E5'
+  document.getElementById('modal-cat-titulo').textContent='Editar categoría'
   document.getElementById('msg-cat-ok').style.display='none'
   document.getElementById('msg-cat-err').style.display='none'
-  document.querySelectorAll('.color-opt').forEach(function(el){
-    el.classList.toggle('selected', el.dataset.bg===c.color_bg)
-  })
+  document.querySelectorAll('.color-opt').forEach(function(el){ el.classList.toggle('selected',el.dataset.bg===c.color_bg) })
   abrirModal('modal-categoria')
 }
 
@@ -1171,14 +1165,11 @@ async function guardarCategoria(){
   var color = document.getElementById('cat-color').value
   var colorBg = document.getElementById('cat-color-bg').value
   var orden = parseInt(document.getElementById('cat-orden').value)||1
-  var msgOk = document.getElementById('msg-cat-ok')
-  var msgErr = document.getElementById('msg-cat-err')
+  var msgOk = document.getElementById('msg-cat-ok'), msgErr = document.getElementById('msg-cat-err')
   msgOk.style.display='none'; msgErr.style.display='none'
   if(!nombre){ msgErr.style.display='block'; msgErr.textContent='Ingresá el nombre'; return }
   var data = { nombre:nombre, emoji:emoji, color:color, color_bg:colorBg, orden:orden, activa:true }
-  var res = id
-    ? await sb.from('categorias_locales').update(data).eq('id',id)
-    : await sb.from('categorias_locales').insert([data])
+  var res = id ? await sb.from('categorias_locales').update(data).eq('id',id) : await sb.from('categorias_locales').insert([data])
   if(res.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+res.error.message; return }
   msgOk.style.display='block'; msgOk.textContent='✓ Categoría guardada'
   setTimeout(function(){ cerrarModal('modal-categoria'); cargarCategorias() },1000)
@@ -1195,10 +1186,7 @@ async function eliminarCategoria(id, nombre){
   cargarCategorias()
 }
 
-function selectEmoji(el){
-  document.getElementById('cat-emoji').value = el.textContent
-}
-
+function selectEmoji(el){ document.getElementById('cat-emoji').value = el.textContent }
 function selectColor(el){
   document.querySelectorAll('.color-opt').forEach(function(e){ e.classList.remove('selected') })
   el.classList.add('selected')
@@ -1209,22 +1197,15 @@ function selectColor(el){
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function abrirModal(id){ document.getElementById(id).classList.remove('hidden') }
 function cerrarModal(id){ document.getElementById(id).classList.add('hidden') }
-function cerrarModalBg(e, id){ if(e.target.id === id) cerrarModal(id) }
-
+function cerrarModalBg(e, id){ if(e.target.id===id) cerrarModal(id) }
 function togglePass(inputId, btn){
   var input = document.getElementById(inputId)
-  if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈' }
-  else { input.type = 'password'; btn.textContent = '👁' }
+  if(input.type==='password'){ input.type='text'; btn.textContent='🙈' }
+  else { input.type='password'; btn.textContent='👁' }
 }
 
-// Inicializar: ocultar selector de restaurante hasta que se elija "encargado"
-document.addEventListener('DOMContentLoaded', function(){
-  toggleRestSelect()
-})
-
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js') })
-}
+document.addEventListener('DOMContentLoaded', function(){ toggleRestSelect() })
+if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js') }) }
 </script>
 </body>
 </html>
