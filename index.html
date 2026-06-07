@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="ALL Admin"/>
 <meta name="theme-color" content="#1A1A1A"/>
 <link rel="manifest" href="manifest.json"/>
-<title>ALL — Admin v2</title>
+<title>ALL — Admin v2.1</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -474,8 +474,18 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://rkinieckmmlvldnccbzm.supabase.co'
+<!-- MODAL DETALLE PEDIDO COBRO -->
+<div id="modal-detalle-cobro" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-detalle-cobro')">
+  <div class="modal" style="max-height:85vh">
+    <div class="modal-title">
+      <span>Detalle del pedido</span>
+      <span class="modal-close" onclick="cerrarModal('modal-detalle-cobro')">✕</span>
+    </div>
+    <div id="modal-detalle-cobro-body"></div>
+  </div>
+</div>
+
+ = 'https://rkinieckmmlvldnccbzm.supabase.co'
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraW5pZWNrbW1sdmxkbmNjYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNDM1NTQsImV4cCI6MjA5NTgxOTU1NH0.Mb82xSMu5KSwgju-rUEh-BBWNVLmJ3Fso5EZy4QeOvs'
 const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraW5pZWNrbW1sdmxkbmNjYnptIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDI0MzU1NCwiZXhwIjoyMDk1ODE5NTU0fQ.yADbKI4Hu8uguPT-KhFMdzuN4Cg-UNv9x5tykjBf4SY'
 const { createClient } = supabase
@@ -957,29 +967,131 @@ async function cargarCobrosResto(){
   var pct = parseFloat(document.getElementById('cobro-pct-input').value)||8
   var hoy = new Date()
   var desde = new Date(hoy); desde.setDate(desde.getDate()-30)
-  var res = await sb.from('pedidos').select('*,perfiles(nombre)')
+  var res = await sb.from('pedidos').select('*,perfiles(nombre,telefono)')
     .eq('restaurante_id', cobrosRestoActual)
     .eq('estado', 'entregado')
     .gte('created_at', desde.toISOString())
     .order('created_at', {ascending:false})
   var pedidos = res.data||[]
   var totalVentas = pedidos.reduce(function(s,p){ return s+(p.subtotal||p.total) },0)
-  var comision = Math.round(totalVentas * pct / 100)
+  var totalComision = Math.round(totalVentas * pct / 100)
   document.getElementById('cobro-pedidos').textContent = pedidos.length
-  document.getElementById('cobro-ventas').textContent = '$'+Math.round(totalVentas/1000)+'k'
-  document.getElementById('cobro-comision').textContent = '$'+Number(comision).toLocaleString('es-AR')
-  if(!pedidos.length){ document.getElementById('cobros-detalle').innerHTML='<div class="loading-spinner">Sin pedidos entregados en este período</div>'; return }
-  document.getElementById('cobros-detalle').innerHTML = pedidos.map(function(p){
-    var fecha = new Date(p.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
+  document.getElementById('cobro-ventas').textContent = '$'+Number(totalVentas).toLocaleString('es-AR')
+  document.getElementById('cobro-comision').textContent = '$'+Number(totalComision).toLocaleString('es-AR')
+
+  if(!pedidos.length){
+    document.getElementById('cobros-detalle').innerHTML='<div class="loading-spinner">Sin pedidos entregados en este período</div>'
+    return
+  }
+
+  var html = ''
+
+  // TABLA HEADER
+  html += '<div style="background:#1A1A1A;border-radius:12px 12px 0 0;padding:10px 14px;display:grid;grid-template-columns:80px 1fr 90px 90px 36px;gap:8px;align-items:center">'
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase">Pedido</div>'
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase">Cliente</div>'
+  html += '<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;text-align:right">Monto</div>'
+  html += '<div style="font-size:10px;font-weight:700;color:#FF4D00;text-transform:uppercase;text-align:right">Comisión</div>'
+  html += '<div></div>'
+  html += '</div>'
+
+  // FILAS
+  pedidos.forEach(function(p){
+    var nro = p.id.substring(0,8).toUpperCase()
+    var fecha = new Date(p.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
+    var hora = new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
     var cliente = p.perfiles ? p.perfiles.nombre : 'Sin nombre'
+    var tel = p.perfiles && p.perfiles.telefono ? p.perfiles.telefono : ''
     var subtotal = p.subtotal||p.total
     var comisionPed = Math.round(subtotal * pct / 100)
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border-radius:10px;margin-bottom:6px;font-size:12px">'
-      +'<div><div style="font-weight:600;color:#1A1A1A">'+cliente+'</div><div style="color:#aaa">'+fecha+'</div></div>'
-      +'<div style="text-align:right"><div style="font-weight:700;color:#1A1A1A">$'+Number(subtotal).toLocaleString('es-AR')+'</div>'
-      +'<div style="color:#FF4D00;font-size:11px">Comisión: $'+Number(comisionPed).toLocaleString('es-AR')+'</div></div>'
-      +'</div>'
-  }).join('')
+    html += '<div style="background:#fff;border-bottom:1px solid #f5f5f5;padding:10px 14px;display:grid;grid-template-columns:80px 1fr 90px 90px 36px;gap:8px;align-items:center">'
+    // Número pedido + fecha
+    html += '<div>'
+    html += '<div style="font-size:11px;font-weight:800;color:#FF4D00">#'+nro+'</div>'
+    html += '<div style="font-size:10px;color:#aaa">'+fecha+' '+hora+'</div>'
+    html += '</div>'
+    // Cliente
+    html += '<div>'
+    html += '<div style="font-size:13px;font-weight:600;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+cliente+'</div>'
+    if(tel) html += '<div style="font-size:10px;color:#888">'+tel+'</div>'
+    html += '</div>'
+    // Monto
+    html += '<div style="text-align:right">'
+    html += '<div style="font-size:13px;font-weight:700;color:#1A1A1A">$'+Number(subtotal).toLocaleString('es-AR')+'</div>'
+    if(p.costo_envio>0) html += '<div style="font-size:10px;color:#1565C0">+$'+Number(p.costo_envio).toLocaleString('es-AR')+' envío</div>'
+    html += '</div>'
+    // Comisión
+    html += '<div style="text-align:right">'
+    html += '<div style="font-size:13px;font-weight:700;color:#FF4D00">$'+Number(comisionPed).toLocaleString('es-AR')+'</div>'
+    html += '<div style="font-size:10px;color:#aaa">'+pct+'%</div>'
+    html += '</div>'
+    // Botón ver pedido
+    html += '<div>'
+    html += '<button onclick="verDetallePedidoCobro(\''+p.id+'\')" style="width:32px;height:32px;border-radius:8px;background:#f5f5f5;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">›</button>'
+    html += '</div>'
+    html += '</div>'
+  })
+
+  // FILA TOTALES
+  html += '<div style="background:#FFF4EF;border-radius:0 0 12px 12px;padding:12px 14px;display:grid;grid-template-columns:80px 1fr 90px 90px 36px;gap:8px;align-items:center;border-top:2px solid #FF4D00">'
+  html += '<div style="font-size:11px;font-weight:800;color:#1A1A1A;grid-column:span 2">TOTAL ('+pedidos.length+' pedidos)</div>'
+  html += '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#1A1A1A">$'+Number(totalVentas).toLocaleString('es-AR')+'</div></div>'
+  html += '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#FF4D00">$'+Number(totalComision).toLocaleString('es-AR')+'</div></div>'
+  html += '<div></div>'
+  html += '</div>'
+
+  document.getElementById('cobros-detalle').innerHTML = html
+}
+
+// Modal detalle pedido desde cobros
+async function verDetallePedidoCobro(pedidoId){
+  var res = await sb.from('pedidos').select('*,perfiles(nombre,telefono),restaurantes(nombre)').eq('id',pedidoId).single()
+  if(res.error||!res.data) return
+  var p = res.data
+  var nro = p.id.substring(0,8).toUpperCase()
+  var fecha = new Date(p.created_at).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'America/Argentina/Buenos_Aires'})
+  var cliente = p.perfiles ? p.perfiles.nombre : 'Sin nombre'
+  var tel = p.perfiles && p.perfiles.telefono ? p.perfiles.telefono : '–'
+  var subtotal = p.subtotal||p.total
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value)||8
+  var comisionPed = Math.round(subtotal * pct / 100)
+
+  var html = '<div style="margin-bottom:16px">'
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+  html += '<div><div style="font-size:16px;font-weight:800;color:#FF4D00">#'+nro+'</div>'
+  html += '<div style="font-size:11px;color:#888">'+fecha+'</div></div>'
+  html += '<div style="background:#E8F5E9;color:#2D6A2D;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700">✅ Entregado</div>'
+  html += '</div>'
+
+  html += '<div style="background:#f5f5f5;border-radius:12px;padding:12px;margin-bottom:12px">'
+  html += '<div style="font-size:11px;color:#888;margin-bottom:4px">Cliente</div>'
+  html += '<div style="font-size:15px;font-weight:700;color:#1A1A1A">'+cliente+'</div>'
+  html += '<div style="font-size:12px;color:#888">📞 '+tel+'</div>'
+  html += '</div>'
+
+  html += '<div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Productos</div>'
+  ;(p.items||[]).forEach(function(item){
+    html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px">'
+    html += '<span style="color:#555">'+item.qty+'× '+item.nombre+'</span>'
+    html += '<span style="font-weight:700;color:#1A1A1A">$'+Number(item.precio*item.qty).toLocaleString('es-AR')+'</span>'
+    html += '</div>'
+  })
+
+  html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee">'
+  if(p.costo_envio>0) html += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span style="color:#888">Envío</span><span style="color:#1565C0;font-weight:600">$'+Number(p.costo_envio).toLocaleString('es-AR')+'</span></div>'
+  if(p.propina>0) html += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span style="color:#888">Propina</span><span style="color:#2D6A2D;font-weight:600">$'+Number(p.propina).toLocaleString('es-AR')+'</span></div>'
+  html += '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;padding:8px 0;margin-top:4px;border-top:1px solid #eee"><span>Total</span><span style="color:#1A1A1A">$'+Number(p.total).toLocaleString('es-AR')+'</span></div>'
+  html += '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:6px 0;background:#FFF4EF;border-radius:8px;padding:8px 10px;margin-top:6px"><span style="color:#888">Comisión ALL ('+pct+'%)</span><span style="color:#FF4D00">$'+Number(comisionPed).toLocaleString('es-AR')+'</span></div>'
+  html += '</div>'
+
+  html += '<div style="margin-top:12px;font-size:12px;color:#888">📍 '+p.direccion_entrega+'</div>'
+  html += '<div style="font-size:12px;color:#888;margin-top:4px">💳 '+p.metodo_pago+'</div>'
+  if(p.notas) html += '<div style="font-size:12px;color:#888;margin-top:4px">📝 '+p.notas+'</div>'
+  html += '</div>'
+
+  // Mostrar en modal genérico
+  document.getElementById('modal-detalle-cobro-body').innerHTML = html
+  document.getElementById('modal-detalle-cobro').classList.remove('hidden')
 }
 
 async function guardarConfigCobro(){
