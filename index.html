@@ -190,7 +190,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <button class="btn-add" onclick="abrirModal('modal-nuevo-usuario')">+ Agregar usuario</button>
   </div>
   <!-- ZONAS DE ENVÍO -->
-  <div id="tab-zonas" class="content hidden">
+  <div id="tab-zonas" class="content hidden" style="overflow-y:auto">
     <div class="section-title">Zonas de envío por restaurante</div>
     <div style="font-size:12px;color:#888;margin-bottom:14px">Configurá el costo de envío según la distancia desde cada restaurante.</div>
     <div class="field-label">Seleccionar restaurante</div>
@@ -215,7 +215,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 
   <!-- CATEGORÍAS -->
-  <div id="tab-categorias" class="content hidden">
+  <div id="tab-categorias" class="content hidden" style="overflow-y:auto">
     <div class="section-title">Categorías de locales</div>
     <div style="font-size:12px;color:#888;margin-bottom:14px">Estas categorías aparecen en la app del cliente para filtrar los locales.</div>
     <div id="lista-categorias"><div class="loading-spinner">Cargando...</div></div>
@@ -429,7 +429,7 @@ async function cerrarSesion(){
 function switchTab(tab, el){
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active') })
   el.classList.add('active')
-  var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios']
+  var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios','categorias','zonas']
   tabs.forEach(function(t){
     document.getElementById('tab-'+t).classList[t === tab ? 'remove' : 'add']('hidden')
   })
