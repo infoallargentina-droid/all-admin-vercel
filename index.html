@@ -836,7 +836,7 @@ async function cargarPedidosAdmin(){
 
   lista.innerHTML = res.data.map(function(p){
     var clienteNombre = p.perfiles ? p.perfiles.nombre : 'Cliente'
-    var clienteTel = p.perfiles && p.perfiles.telefono ? p.perfiles.telefono : ''
+    var clienteTel = p.perfiles && p.perfiles.telefono ? ' · '+p.perfiles.telefono : ''
     var restoNombre = p.restaurantes ? p.restaurantes.nombre : '–'
     var hora = new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})
     var items = (p.items||[]).map(function(i){ return i.qty+'× '+i.nombre }).join(', ')
