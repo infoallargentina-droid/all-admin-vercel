@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.json"/>
 <title>ALL — Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden}
@@ -188,51 +189,69 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
 
   <!-- COBROS -->
   <div id="tab-cobros" class="content hidden" style="overflow-y:auto">
-    <div class="section-title">Cuenta corriente por restaurante</div>
-    <div style="font-size:12px;color:#888;margin-bottom:14px">Seguimiento de comisiones y cobros pendientes.</div>
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <select id="cobros-resto-select" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px;flex:1" onchange="cargarCobrosResto(this.value)">
-        <option value="">-- Elegí un restaurante --</option>
-      </select>
-      <select id="cobros-periodo" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarCobrosResto(document.getElementById('cobros-resto-select').value)">
-        <option value="semana">Esta semana</option>
-        <option value="quincena">Esta quincena</option>
-        <option value="mes">Este mes</option>
-        <option value="todo">Todo el historial</option>
-      </select>
-    </div>
-    <div id="cobros-resumen" style="display:none">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
-        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="cobro-pedidos">0</div><div class="stat-label">Pedidos</div></div>
-        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val" id="cobro-ventas">$0</div><div class="stat-label">Ventas totales</div></div>
-        <div class="stat-card highlight"><div class="stat-icon">⚙️</div><div class="stat-val" id="cobro-comision">$0</div><div class="stat-label">Comisión ALL</div></div>
-      </div>
+    <div class="section-title">Cuenta corriente</div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px">Seguimiento de comisiones y cobros por restaurante.</div>
+
+    <!-- Selector restaurante -->
+    <select id="cobros-resto-select" class="input" onchange="seleccionarRestoCobro(this.value)">
+      <option value="">-- Elegí un restaurante --</option>
+    </select>
+
+    <div id="cobros-empty" style="text-align:center;padding:32px;color:#aaa;font-size:13px">Seleccioná un restaurante</div>
+
+    <div id="cobros-panel" style="display:none">
+      <!-- Config cobro -->
       <div class="rest-card" style="margin-bottom:14px">
-        <div class="rest-head" style="flex-direction:column;align-items:flex-start;gap:8px">
-          <div style="font-size:13px;font-weight:700;color:#1A1A1A">Configuración de cobro</div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="rest-head" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">⚙️ Configuración de cobro</div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;width:100%">
             <div>
               <div style="font-size:11px;color:#888;margin-bottom:4px">Comisión %</div>
-              <input type="number" id="cobro-pct-input" class="input" style="margin:0;width:80px;padding:8px;font-size:14px" placeholder="8" min="0" max="30"/>
+              <input type="number" id="cobro-pct-input" class="input" style="margin:0;width:80px;padding:8px;font-size:15px;font-weight:700" placeholder="8" min="0" max="30"/>
             </div>
             <div>
-              <div style="font-size:11px;color:#888;margin-bottom:4px">Período</div>
-              <select id="cobro-periodo-config" class="input" style="margin:0;padding:8px;font-size:12px">
-                <option value="semanal">Semanal</option>
-                <option value="quincenal">Quincenal</option>
-                <option value="mensual">Mensual</option>
+              <div style="font-size:11px;color:#888;margin-bottom:4px">Período de cobro</div>
+              <select id="cobro-periodo-config" class="input" style="margin:0;padding:8px;font-size:13px" onchange="actualizarPeriodos()">
+                <option value="7">Semanal (cada 7 días)</option>
+                <option value="14">Quincenal (cada 14 días)</option>
+                <option value="30">Mensual (cada 30 días)</option>
               </select>
             </div>
-            <button class="btn-sm btn-sm-naranja" style="margin-top:16px;padding:10px 16px" onclick="guardarConfigCobro()">💾 Guardar</button>
+            <div>
+              <div style="font-size:11px;color:#888;margin-bottom:4px">Inicio del primer período</div>
+              <input type="date" id="cobro-fecha-inicio" class="input" style="margin:0;padding:8px;font-size:13px" onchange="actualizarPeriodos()"/>
+            </div>
+            <button class="btn-sm btn-sm-naranja" style="padding:10px 16px;margin-bottom:2px" onclick="guardarConfigCobro()">💾 Guardar config</button>
           </div>
+          <div id="cobro-config-msg" style="font-size:11px;color:#2D6A2D;display:none">✓ Configuración guardada</div>
         </div>
       </div>
-      <div class="section-title">Detalle de pedidos</div>
-      <div id="cobros-detalle"></div>
-      <button class="btn-main" style="margin-top:14px;background:#2D6A2D" onclick="marcarCobrado()">✓ Marcar período como cobrado</button>
-      <div id="cobro-msg" style="font-size:11px;color:#2D6A2D;margin-top:8px;text-align:center;display:none">✓ Guardado</div>
+
+      <!-- Selector período -->
+      <div class="field-label">Período a cobrar</div>
+      <select id="cobro-periodo-sel" class="input" onchange="cargarCobrosResto()">
+        <option value="">Cargando períodos...</option>
+      </select>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="cobro-pedidos">0</div><div class="stat-label">Pedidos</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val" id="cobro-ventas">$0</div><div class="stat-label">Ventas</div></div>
+        <div class="stat-card highlight"><div class="stat-icon">⚙️</div><div class="stat-val" id="cobro-comision">$0</div><div class="stat-label">Comisión ALL</div></div>
+      </div>
+
+      <!-- Detalle -->
+      <div class="section-title">Detalle de pedidos del período</div>
+      <div id="cobros-detalle"><div class="loading-spinner">Seleccioná un período</div></div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn-main" style="flex:1;background:#2D6A2D" onclick="marcarCobrado()">✓ Marcar como cobrado</button>
+        <button class="btn-main" style="flex:1;background:#1565C0" onclick="generarPDF()">📄 Generar PDF</button>
+        <button class="btn-main" style="flex:1;background:#25D366" onclick="enviarWhatsApp()">📲 Enviar por WhatsApp</button>
+      </div>
+      <div id="cobro-msg" style="font-size:11px;color:#2D6A2D;margin-top:8px;text-align:center;display:none"></div>
     </div>
-    <div id="cobros-empty" style="text-align:center;padding:32px;color:#aaa;font-size:13px">Seleccioná un restaurante</div>
   </div>
 
   <!-- CADETES -->
@@ -501,7 +520,7 @@ function switchTab(tab, el){
   if(tab === 'cadetes') cargarCadetes()
   if(tab === 'categorias') cargarCategorias()
   if(tab === 'zonas') cargarRestosZonas()
-  if(tab === 'cobros') cargarRestosCobros()
+  if(tab === 'cobros'){ cargarRestosCobros() }
   if(tab === 'pedidos') cargarPedidosAdmin()
   if(tab === 'restaurantes') cargarRestaurantes()
 }
