@@ -144,6 +144,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <button class="nav-btn" onclick="switchTab('usuarios',this)">Usuarios</button>
     <button class="nav-btn" onclick="switchTab('categorias',this)">Categorías</button>
     <button class="nav-btn" onclick="switchTab('zonas',this)">Zonas envío</button>
+    <button class="nav-btn" onclick="switchTab('cobros',this)">Cobros</button>
   </div>
 
   <!-- DASHBOARD -->
@@ -166,9 +167,72 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 
   <!-- PEDIDOS -->
-  <div id="tab-pedidos" class="content hidden">
-    <div class="section-title">Pedidos de hoy</div>
+  <div id="tab-pedidos" class="content hidden" style="overflow-y:auto">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <div class="section-title" style="margin:0">Pedidos</div>
+      <select id="pedidos-filtro-resto" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarPedidosAdmin()">
+        <option value="">Todos los restaurantes</option>
+      </select>
+      <select id="pedidos-filtro-estado" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarPedidosAdmin()">
+        <option value="">Todos los estados</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="preparando">Preparando</option>
+        <option value="camino">En camino</option>
+        <option value="entregado">Entregado</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+      <input type="date" id="pedidos-filtro-fecha" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarPedidosAdmin()"/>
+    </div>
     <div id="lista-pedidos"><div class="loading-spinner">Cargando pedidos...</div></div>
+  </div>
+
+  <!-- COBROS -->
+  <div id="tab-cobros" class="content hidden" style="overflow-y:auto">
+    <div class="section-title">Cuenta corriente por restaurante</div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px">Seguimiento de comisiones y cobros pendientes.</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <select id="cobros-resto-select" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px;flex:1" onchange="cargarCobrosResto(this.value)">
+        <option value="">-- Elegí un restaurante --</option>
+      </select>
+      <select id="cobros-periodo" class="input" style="margin:0;width:auto;padding:8px 12px;font-size:12px" onchange="cargarCobrosResto(document.getElementById('cobros-resto-select').value)">
+        <option value="semana">Esta semana</option>
+        <option value="quincena">Esta quincena</option>
+        <option value="mes">Este mes</option>
+        <option value="todo">Todo el historial</option>
+      </select>
+    </div>
+    <div id="cobros-resumen" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+        <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val" id="cobro-pedidos">0</div><div class="stat-label">Pedidos</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val" id="cobro-ventas">$0</div><div class="stat-label">Ventas totales</div></div>
+        <div class="stat-card highlight"><div class="stat-icon">⚙️</div><div class="stat-val" id="cobro-comision">$0</div><div class="stat-label">Comisión ALL</div></div>
+      </div>
+      <div class="rest-card" style="margin-bottom:14px">
+        <div class="rest-head" style="flex-direction:column;align-items:flex-start;gap:8px">
+          <div style="font-size:13px;font-weight:700;color:#1A1A1A">Configuración de cobro</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div>
+              <div style="font-size:11px;color:#888;margin-bottom:4px">Comisión %</div>
+              <input type="number" id="cobro-pct-input" class="input" style="margin:0;width:80px;padding:8px;font-size:14px" placeholder="8" min="0" max="30"/>
+            </div>
+            <div>
+              <div style="font-size:11px;color:#888;margin-bottom:4px">Período</div>
+              <select id="cobro-periodo-config" class="input" style="margin:0;padding:8px;font-size:12px">
+                <option value="semanal">Semanal</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual">Mensual</option>
+              </select>
+            </div>
+            <button class="btn-sm btn-sm-naranja" style="margin-top:16px;padding:10px 16px" onclick="guardarConfigCobro()">💾 Guardar</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">Detalle de pedidos</div>
+      <div id="cobros-detalle"></div>
+      <button class="btn-main" style="margin-top:14px;background:#2D6A2D" onclick="marcarCobrado()">✓ Marcar período como cobrado</button>
+      <div id="cobro-msg" style="font-size:11px;color:#2D6A2D;margin-top:8px;text-align:center;display:none">✓ Guardado</div>
+    </div>
+    <div id="cobros-empty" style="text-align:center;padding:32px;color:#aaa;font-size:13px">Seleccioná un restaurante</div>
   </div>
 
   <!-- CADETES -->
@@ -429,7 +493,7 @@ async function cerrarSesion(){
 function switchTab(tab, el){
   document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active') })
   el.classList.add('active')
-  var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios','categorias','zonas']
+  var tabs = ['dashboard','restaurantes','pedidos','cadetes','usuarios','categorias','zonas','cobros']
   tabs.forEach(function(t){
     document.getElementById('tab-'+t).classList[t === tab ? 'remove' : 'add']('hidden')
   })
@@ -437,6 +501,8 @@ function switchTab(tab, el){
   if(tab === 'cadetes') cargarCadetes()
   if(tab === 'categorias') cargarCategorias()
   if(tab === 'zonas') cargarRestosZonas()
+  if(tab === 'cobros') cargarRestosCobros()
+  if(tab === 'pedidos') cargarPedidosAdmin()
   if(tab === 'restaurantes') cargarRestaurantes()
 }
 
@@ -730,6 +796,171 @@ async function eliminarUsuario(userId, email){
   var result = await sbAdmin.auth.admin.deleteUser(userId)
   if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
+}
+
+// ─── PEDIDOS ADMIN ───────────────────────────────────────────────────────────
+var tagClassAdmin = {nuevo:'tag-nuevo',preparando:'tag-preparando',camino:'tag-camino',entregado:'tag-entregado',cancelado:'tag-cancelado'}
+var tagLabelAdmin = {nuevo:'NUEVO',preparando:'PREPARANDO',camino:'EN CAMINO',entregado:'ENTREGADO',cancelado:'CANCELADO'}
+
+async function cargarPedidosAdmin(){
+  var lista = document.getElementById('lista-pedidos')
+  lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
+  
+  // cargar restaurantes en filtro
+  var restoSel = document.getElementById('pedidos-filtro-resto')
+  if(restoSel.options.length <= 1){
+    var rr = await sb.from('restaurantes').select('id,nombre').order('nombre')
+    if(rr.data) rr.data.forEach(function(r){
+      var opt = document.createElement('option')
+      opt.value = r.id; opt.textContent = r.nombre
+      restoSel.appendChild(opt)
+    })
+  }
+
+  var fechaEl = document.getElementById('pedidos-filtro-fecha')
+  if(!fechaEl.value) fechaEl.value = new Date().toISOString().split('T')[0]
+  var fecha = fechaEl.value
+  var restoId = document.getElementById('pedidos-filtro-resto').value
+  var estado = document.getElementById('pedidos-filtro-estado').value
+
+  var query = sb.from('pedidos').select('*,restaurantes(nombre),perfiles(nombre,telefono)')
+    .gte('created_at', fecha+'T00:00:00')
+    .lte('created_at', fecha+'T23:59:59')
+    .order('created_at', {ascending:false})
+  if(restoId) query = query.eq('restaurante_id', restoId)
+  if(estado) query = query.eq('estado', estado)
+
+  var res = await query
+  if(res.error){ lista.innerHTML='<div class="loading-spinner">Error: '+res.error.message+'</div>'; return }
+  if(!res.data||!res.data.length){ lista.innerHTML='<div class="loading-spinner">Sin pedidos para esta fecha</div>'; return }
+
+  lista.innerHTML = res.data.map(function(p){
+    var clienteNombre = p.perfiles ? p.perfiles.nombre : 'Cliente'
+    var clienteTel = p.perfiles && p.perfiles.telefono ? p.perfiles.telefono : ''
+    var restoNombre = p.restaurantes ? p.restaurantes.nombre : '–'
+    var hora = new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})
+    var items = (p.items||[]).map(function(i){ return i.qty+'× '+i.nombre }).join(', ')
+    return '<div class="pedido-card" style="margin-bottom:10px">'
+      +'<div class="pedido-head"><div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<span class="tag '+(tagClassAdmin[p.estado]||'tag-nuevo')+'">'+(tagLabelAdmin[p.estado]||p.estado.toUpperCase())+'</span>'
+      +'<span style="font-size:11px;color:#888">'+restoNombre+'</span>'
+      +'</div>'
+      +'<div class="pedido-cliente">'+clienteNombre+(clienteTel?' · '+clienteTel:'')+'</div>'
+      +'</div><div class="pedido-hora">'+hora+'</div></div>'
+      +'<div class="pedido-items" style="font-size:12px">'+items+'</div>'
+      +'<div style="padding:8px 14px;font-size:12px;color:#888;border-bottom:1px solid #FFE8DC">'
+      +'📍 '+p.direccion_entrega+' &nbsp;·&nbsp; 💳 '+p.metodo_pago
+      +'</div>'
+      +'<div class="pedido-footer">'
+      +'<div><div class="pedido-total">$'+Number(p.total).toLocaleString('es-AR')+'</div>'
+      +(p.costo_envio>0?'<div style="font-size:11px;color:#888">Envío: $'+Number(p.costo_envio).toLocaleString('es-AR')+'</div>':'')
+      +'</div>'
+      +'<div style="display:flex;gap:6px">'
+      +(p.ticket_url?'<button class="btn-sm btn-sm-naranja" data-url="'+p.ticket_url+'" onclick="window.open(this.dataset.url)">📎 Comprobante</button>':'')
+      +'</div></div></div>'
+  }).join('')
+}
+
+// ─── COBROS ───────────────────────────────────────────────────────────────────
+var cobrosRestoActual = null
+
+async function cargarRestosCobros(){
+  var select = document.getElementById('cobros-resto-select')
+  var selectPed = document.getElementById('pedidos-filtro-resto')
+  var res = await sb.from('restaurantes').select('id,nombre,comision_porcentaje,cobro_periodo').order('nombre')
+  if(res.data){
+    var opts = '<option value="">-- Elegí un restaurante --</option>'
+      + res.data.map(function(r){ return '<option value="'+r.id+'">'+r.nombre+'</option>' }).join('')
+    select.innerHTML = opts
+  }
+}
+
+async function cargarCobrosResto(restoId){
+  if(!restoId){ 
+    document.getElementById('cobros-resumen').style.display='none'
+    document.getElementById('cobros-empty').style.display='block'
+    return 
+  }
+  cobrosRestoActual = restoId
+  document.getElementById('cobros-resumen').style.display='block'
+  document.getElementById('cobros-empty').style.display='none'
+
+  // cargar config del resto
+  var restoRes = await sb.from('restaurantes').select('comision_porcentaje,cobro_periodo').eq('id',restoId).single()
+  if(restoRes.data){
+    var pctEl = document.getElementById('cobro-pct-input')
+    var perEl = document.getElementById('cobro-periodo-config')
+    if(pctEl) pctEl.value = restoRes.data.comision_porcentaje || 8
+    if(perEl) perEl.value = restoRes.data.cobro_periodo || 'semanal'
+  }
+
+  // calcular fechas según período
+  var periodo = document.getElementById('cobros-periodo').value
+  var fechaDesde, fechaHasta = new Date()
+  if(periodo === 'semana'){
+    fechaDesde = new Date(); fechaDesde.setDate(fechaDesde.getDate() - fechaDesde.getDay())
+  } else if(periodo === 'quincena'){
+    fechaDesde = new Date()
+    fechaDesde.setDate(fechaHasta.getDate() <= 15 ? 1 : 16)
+  } else if(periodo === 'mes'){
+    fechaDesde = new Date(fechaHasta.getFullYear(), fechaHasta.getMonth(), 1)
+  } else {
+    fechaDesde = new Date('2020-01-01')
+  }
+
+  var res = await sb.from('pedidos').select('*,perfiles(nombre)')
+    .eq('restaurante_id', restoId)
+    .eq('estado', 'entregado')
+    .gte('created_at', fechaDesde.toISOString())
+    .order('created_at', {ascending:false})
+
+  var pedidos = res.data || []
+  var totalVentas = pedidos.reduce(function(s,p){ return s+(p.subtotal||p.total) },0)
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
+  var comision = Math.round(totalVentas * pct / 100)
+
+  document.getElementById('cobro-pedidos').textContent = pedidos.length
+  document.getElementById('cobro-ventas').textContent = '$'+Math.round(totalVentas/1000)+'k'
+  document.getElementById('cobro-comision').textContent = '$'+Number(comision).toLocaleString('es-AR')
+
+  if(!pedidos.length){
+    document.getElementById('cobros-detalle').innerHTML = '<div class="loading-spinner">Sin pedidos entregados en este período</div>'
+    return
+  }
+
+  document.getElementById('cobros-detalle').innerHTML = pedidos.map(function(p){
+    var fecha = new Date(p.created_at).toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    var cliente = p.perfiles ? p.perfiles.nombre : 'Cliente'
+    var subtotal = p.subtotal || p.total
+    var comisionPed = Math.round(subtotal * pct / 100)
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border-radius:10px;margin-bottom:6px;font-size:12px">'
+      +'<div><div style="font-weight:600;color:#1A1A1A">'+cliente+'</div><div style="color:#aaa">'+fecha+'</div></div>'
+      +'<div style="text-align:right"><div style="font-weight:700;color:#1A1A1A">$'+Number(subtotal).toLocaleString('es-AR')+'</div>'
+      +'<div style="color:#FF4D00;font-size:11px">Comisión: $'+Number(comisionPed).toLocaleString('es-AR')+'</div></div>'
+      +'</div>'
+  }).join('')
+}
+
+async function guardarConfigCobro(){
+  if(!cobrosRestoActual) return
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
+  var periodo = document.getElementById('cobro-periodo-config').value
+  var res = await sb.from('restaurantes').update({comision_porcentaje:pct, cobro_periodo:periodo}).eq('id',cobrosRestoActual)
+  var msg = document.getElementById('cobro-msg')
+  msg.style.display='block'; msg.textContent = res.error ? 'Error: '+res.error.message : '✓ Configuración guardada'
+  setTimeout(function(){ msg.style.display='none' },2000)
+  cargarCobrosResto(cobrosRestoActual)
+}
+
+async function marcarCobrado(){
+  if(!cobrosRestoActual || !confirm('¿Marcar este período como cobrado?')) return
+  var msg = document.getElementById('cobro-msg')
+  // registrar el cobro
+  var pct = parseFloat(document.getElementById('cobro-pct-input').value) || 8
+  var totalEl = document.getElementById('cobro-comision').textContent
+  msg.style.display='block'; msg.textContent='✓ Período marcado como cobrado'
+  setTimeout(function(){ msg.style.display='none' },3000)
 }
 
 // ─── ZONAS DE ENVÍO ──────────────────────────────────────────────────────────
