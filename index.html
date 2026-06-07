@@ -143,6 +143,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <button class="nav-btn" onclick="switchTab('cadetes',this)">Cadetes</button>
     <button class="nav-btn" onclick="switchTab('usuarios',this)">Usuarios</button>
     <button class="nav-btn" onclick="switchTab('categorias',this)">Categorías</button>
+    <button class="nav-btn" onclick="switchTab('zonas',this)">Zonas envío</button>
   </div>
 
   <!-- DASHBOARD -->
@@ -188,6 +189,31 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
     <div id="lista-usuarios"><div class="loading-spinner">Cargando usuarios...</div></div>
     <button class="btn-add" onclick="abrirModal('modal-nuevo-usuario')">+ Agregar usuario</button>
   </div>
+  <!-- ZONAS DE ENVÍO -->
+  <div id="tab-zonas" class="content hidden">
+    <div class="section-title">Zonas de envío por restaurante</div>
+    <div style="font-size:12px;color:#888;margin-bottom:14px">Configurá el costo de envío según la distancia desde cada restaurante.</div>
+    <div class="field-label">Seleccionar restaurante</div>
+    <select id="zonas-resto-select" class="input" onchange="cargarZonasResto(this.value)" style="margin-bottom:16px">
+      <option value="">-- Elegí un restaurante --</option>
+    </select>
+    <div id="lista-zonas"><div class="loading-spinner">Seleccioná un restaurante</div></div>
+    <div id="zona-form" style="display:none">
+      <button class="btn-add" onclick="abrirModalZona()">+ Agregar zona</button>
+    </div>
+    <div style="margin-top:16px">
+      <div class="field-label">Coordenadas del restaurante</div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px">Necesarias para calcular la distancia al cliente.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div><div style="font-size:11px;color:#888;margin-bottom:4px">Latitud</div><input type="number" id="resto-lat" class="input" placeholder="-38.7183" step="0.0001" style="margin-bottom:0"/></div>
+        <div><div style="font-size:11px;color:#888;margin-bottom:4px">Longitud</div><input type="number" id="resto-lng" class="input" placeholder="-62.2663" step="0.0001" style="margin-bottom:0"/></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px">Tip: buscá el restaurante en Google Maps, clic derecho → "¿Qué hay aquí?" y copiá las coordenadas.</div>
+      <button class="btn-sm btn-sm-naranja" style="padding:10px 16px" onclick="guardarCoordenadas()">💾 Guardar coordenadas</button>
+      <div id="coord-msg" style="font-size:11px;color:#2D6A2D;margin-top:8px;display:none">✓ Coordenadas guardadas</div>
+    </div>
+  </div>
+
   <!-- CATEGORÍAS -->
   <div id="tab-categorias" class="content hidden">
     <div class="section-title">Categorías de locales</div>
@@ -322,6 +348,29 @@ body{font-family:system-ui,-apple-system,sans-serif;background:#1A1A1A}
   </div>
 </div>
 
+<!-- MODAL ZONA -->
+<div id="modal-zona" class="modal-bg hidden" onclick="cerrarModalBg(event,'modal-zona')">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-zona-titulo">Nueva zona</span>
+      <span class="modal-close" onclick="cerrarModal('modal-zona')">✕</span>
+    </div>
+    <div id="msg-zona-ok" class="msg-ok"></div>
+    <div id="msg-zona-err" class="msg-err"></div>
+    <input type="hidden" id="zona-id"/>
+    <div class="field-label">Nombre de la zona</div>
+    <input type="text" id="zona-nombre" placeholder="Ej: Zona 1 - Centro" class="input"/>
+    <div class="field-label">Radio máximo (km)</div>
+    <input type="number" id="zona-radio" placeholder="Ej: 3" step="0.5" class="input"/>
+    <div class="field-label">Precio del envío ($)</div>
+    <input type="number" id="zona-precio" placeholder="Ej: 800" class="input"/>
+    <div class="field-label">Orden</div>
+    <input type="number" id="zona-orden" placeholder="1" value="1" class="input"/>
+    <button class="btn-main btn-naranja" onclick="guardarZona()">Guardar zona</button>
+    <button class="btn-add" style="margin-top:8px" onclick="cerrarModal('modal-zona')">Cancelar</button>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://rkinieckmmlvldnccbzm.supabase.co'
 const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraW5pZWNrbW1sdmxkbmNjYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNDM1NTQsImV4cCI6MjA5NTgxOTU1NH0.Mb82xSMu5KSwgju-rUEh-BBWNVLmJ3Fso5EZy4QeOvs'
@@ -387,6 +436,7 @@ function switchTab(tab, el){
   if(tab === 'usuarios') cargarUsuarios()
   if(tab === 'cadetes') cargarCadetes()
   if(tab === 'categorias') cargarCategorias()
+  if(tab === 'zonas') cargarRestosZonas()
   if(tab === 'restaurantes') cargarRestaurantes()
 }
 
@@ -680,6 +730,122 @@ async function eliminarUsuario(userId, email){
   var result = await sbAdmin.auth.admin.deleteUser(userId)
   if(result.error){ alert('Error: '+result.error.message); return }
   cargarUsuarios()
+}
+
+// ─── ZONAS DE ENVÍO ──────────────────────────────────────────────────────────
+var zonaRestoSeleccionado = null
+var zonasCache = []
+
+async function cargarRestosZonas(){
+  var select = document.getElementById('zonas-resto-select')
+  var res = await sb.from('restaurantes').select('id,nombre').order('nombre')
+  if(res.data){
+    select.innerHTML = '<option value="">-- Elegí un restaurante --</option>'
+      + res.data.map(function(r){
+          return '<option value="'+r.id+'">'+r.nombre+'</option>'
+        }).join('')
+  }
+}
+
+async function cargarZonasResto(restoId){
+  var lista = document.getElementById('lista-zonas')
+  var form = document.getElementById('zona-form')
+  if(!restoId){ lista.innerHTML='<div class="loading-spinner">Seleccioná un restaurante</div>'; form.style.display='none'; return }
+  zonaRestoSeleccionado = restoId
+  form.style.display = 'block'
+  lista.innerHTML = '<div class="loading-spinner">Cargando...</div>'
+  
+  // cargar coordenadas del resto
+  var restoRes = await sb.from('restaurantes').select('lat,lng').eq('id',restoId).single()
+  if(restoRes.data){
+    var latEl = document.getElementById('resto-lat')
+    var lngEl = document.getElementById('resto-lng')
+    if(latEl) latEl.value = restoRes.data.lat || ''
+    if(lngEl) lngEl.value = restoRes.data.lng || ''
+  }
+
+  var res = await sb.from('zonas_envio').select('*').eq('restaurante_id',restoId).order('orden')
+  zonasCache = res.data || []
+  if(!zonasCache.length){ lista.innerHTML='<div class="loading-spinner">Sin zonas configuradas</div>'; return }
+  lista.innerHTML = zonasCache.map(function(z){
+    return '<div class="zona-card">'
+      +'<div class="zona-head">'
+      +'<div class="zona-badge">'+z.radio_km+'<span style="font-size:9px">km</span></div>'
+      +'<div class="zona-info">'
+      +'<div class="zona-nombre">'+z.nombre+'</div>'
+      +'<div class="zona-detail">Hasta '+z.radio_km+' km del local</div>'
+      +'</div>'
+      +'<div class="zona-precio">$'+Number(z.precio).toLocaleString('es-AR')+'</div>'
+      +'</div>'
+      +'<div class="zona-actions">'
+      +'<button class="btn-sm btn-sm-naranja" data-id="'+z.id+'" onclick="editarZona(this.dataset.id)">✏️ Editar</button>'
+      +'<button class="btn-sm btn-sm-rojo" data-id="'+z.id+'" data-nombre="'+z.nombre+'" onclick="eliminarZona(this.dataset.id,this.dataset.nombre)">🗑 Eliminar</button>'
+      +'</div></div>'
+  }).join('')
+}
+
+function abrirModalZona(){
+  document.getElementById('zona-id').value = ''
+  document.getElementById('zona-nombre').value = ''
+  document.getElementById('zona-radio').value = ''
+  document.getElementById('zona-precio').value = ''
+  document.getElementById('zona-orden').value = (zonasCache.length+1).toString()
+  document.getElementById('modal-zona-titulo').textContent = 'Nueva zona'
+  document.getElementById('msg-zona-ok').style.display='none'
+  document.getElementById('msg-zona-err').style.display='none'
+  abrirModal('modal-zona')
+}
+
+function editarZona(id){
+  var z = zonasCache.find(function(x){ return x.id===id })
+  if(!z) return
+  document.getElementById('zona-id').value = z.id
+  document.getElementById('zona-nombre').value = z.nombre||''
+  document.getElementById('zona-radio').value = z.radio_km||''
+  document.getElementById('zona-precio').value = z.precio||''
+  document.getElementById('zona-orden').value = z.orden||1
+  document.getElementById('modal-zona-titulo').textContent = 'Editar zona'
+  document.getElementById('msg-zona-ok').style.display='none'
+  document.getElementById('msg-zona-err').style.display='none'
+  abrirModal('modal-zona')
+}
+
+async function guardarZona(){
+  var id = document.getElementById('zona-id').value
+  var nombre = document.getElementById('zona-nombre').value.trim()
+  var radio = parseFloat(document.getElementById('zona-radio').value)
+  var precio = parseFloat(document.getElementById('zona-precio').value)
+  var orden = parseInt(document.getElementById('zona-orden').value)||1
+  var msgOk = document.getElementById('msg-zona-ok')
+  var msgErr = document.getElementById('msg-zona-err')
+  msgOk.style.display='none'; msgErr.style.display='none'
+  if(!nombre||!radio||!precio){ msgErr.style.display='block'; msgErr.textContent='Completá todos los campos'; return }
+  if(!zonaRestoSeleccionado){ msgErr.style.display='block'; msgErr.textContent='Seleccioná un restaurante'; return }
+  var data = { restaurante_id:zonaRestoSeleccionado, nombre:nombre, radio_km:radio, precio:precio, orden:orden }
+  var res = id
+    ? await sb.from('zonas_envio').update(data).eq('id',id)
+    : await sb.from('zonas_envio').insert([data])
+  if(res.error){ msgErr.style.display='block'; msgErr.textContent='Error: '+res.error.message; return }
+  msgOk.style.display='block'; msgOk.textContent='✓ Zona guardada'
+  setTimeout(function(){ cerrarModal('modal-zona'); cargarZonasResto(zonaRestoSeleccionado) },1000)
+}
+
+async function eliminarZona(id, nombre){
+  if(!confirm('¿Eliminar zona "'+nombre+'"?')) return
+  await sb.from('zonas_envio').delete().eq('id',id)
+  cargarZonasResto(zonaRestoSeleccionado)
+}
+
+async function guardarCoordenadas(){
+  if(!zonaRestoSeleccionado){ alert('Seleccioná un restaurante primero'); return }
+  var lat = parseFloat(document.getElementById('resto-lat').value)
+  var lng = parseFloat(document.getElementById('resto-lng').value)
+  if(!lat||!lng){ alert('Ingresá latitud y longitud'); return }
+  var res = await sb.from('restaurantes').update({lat:lat, lng:lng}).eq('id',zonaRestoSeleccionado)
+  var msg = document.getElementById('coord-msg')
+  msg.style.display = res.error ? 'none' : 'block'
+  if(res.error) alert('Error: '+res.error.message)
+  setTimeout(function(){ msg.style.display='none' },2000)
 }
 
 // ─── CATEGORÍAS ──────────────────────────────────────────────────────────────
